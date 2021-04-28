@@ -28,7 +28,7 @@ import openfl.Assets;
 import Discord.DiscordClient;
 #end
 
-#if cpp
+#if desktop
 import sys.thread.Thread;
 #end
 
@@ -39,6 +39,7 @@ class TitleState extends MusicBeatState
 	static var initialized:Bool = false;
 
 	var blackScreen:FlxSprite;
+	static public var soundExt:String = ".ogg";
 	var credGroup:FlxGroup;
 	var credTextShit:Alphabet;
 	var textGroup:FlxGroup;
@@ -109,7 +110,14 @@ class TitleState extends MusicBeatState
 		}
 
 		#if FREEPLAY
-		FlxG.switchState(new FreeplayState());
+		var parsed:Dynamic = CoolUtil.parseJson(File.getContent('assets/data/freeplaySongJson.jsonc'));
+
+		if(parsed.length==1){
+			FreeplayState.id = 0;
+			FlxG.switchState(new FreeplayState());
+		}else{
+			FlxG.switchState(new FreeplayCategory());
+		}
 		#elseif CHARTING
 		FlxG.switchState(new ChartingState());
 		#else
@@ -234,7 +242,7 @@ class TitleState extends MusicBeatState
 
 	function getIntroTextShit():Array<Array<String>>
 	{
-		var fullText:String = Assets.getText(Paths.txt('introText'));
+		var fullText:String = "technically this is my first mod";
 
 		var firstArray:Array<String> = fullText.split('\n');
 		var swagGoodArray:Array<Array<String>> = [];
@@ -308,34 +316,18 @@ class TitleState extends MusicBeatState
 
 				// Get current version of Kade Engine
 
-				var http = new haxe.Http("https://raw.githubusercontent.com/KadeDev/Kade-Engine/master/version.downloadMe");
-
-				http.onData = function (data:String) {
-				  
-				  	if (!MainMenuState.kadeEngineVer.contains(data.trim()) && !OutdatedSubState.leftState && MainMenuState.nightly == "")
-					{
-						trace('outdated lmao! ' + data.trim() + ' != ' + MainMenuState.kadeEngineVer);
-						OutdatedSubState.needVer = data;
-						FlxG.switchState(new OutdatedSubState());
-					}
-					else
-					{
+					
 						FlxG.switchState(new MainMenuState());
-					}
-				}
+					
+
 				
-				http.onError = function (error) {
-				  trace('error: $error');
-				  FlxG.switchState(new MainMenuState()); // fail but we go anyway
-				}
-				
-				http.request();
+
 
 			});
 			// FlxG.sound.play(Paths.music('titleShoot'), 0.7);
 		}
 
-		if (pressedEnter && !skippedIntro && initialized)
+		if (pressedEnter && !skippedIntro)
 		{
 			skipIntro();
 		}

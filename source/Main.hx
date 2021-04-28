@@ -117,3 +117,4 @@ class Main extends Sprite
 		return fpsCounter.currentFPS;
 	}
 }
+//developed by kidsfreej on github

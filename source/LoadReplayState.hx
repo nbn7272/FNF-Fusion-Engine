@@ -21,7 +21,7 @@ class LoadReplayState extends MusicBeatState
 	var selector:FlxText;
 	var curSelected:Int = 0;
 
-    var songs:Array<FreeplayState.SongMetadata> = [];
+    var songs:Array<FreeplayCategory.SongMetadata> = [];
 
 	var controlsStrings:Array<String> = [];
     var actualNames:Array<String> = [];
@@ -101,7 +101,7 @@ class LoadReplayState extends MusicBeatState
         var week:Int = 0;
         for (i in 0...songs.length)
         {
-            var pog:FreeplayState.SongMetadata = songs[i];
+            var pog:FreeplayCategory.SongMetadata = songs[i];
             if (pog.songName.toLowerCase() == songName)
                 week = pog.week;
         }
@@ -110,7 +110,7 @@ class LoadReplayState extends MusicBeatState
 
 	public function addSong(songName:String, weekNum:Int, songCharacter:String)
         {
-            songs.push(new FreeplayState.SongMetadata(songName, weekNum, songCharacter));
+            songs.push(new FreeplayCategory.SongMetadata(songName, weekNum, songCharacter));
         }
     
         public function addWeek(songs:Array<String>, weekNum:Int, ?songCharacters:Array<String>)

@@ -7,6 +7,9 @@ import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 
+#if sys
+import sys.io.File;
+#end
 class GameOverSubstate extends MusicBeatSubstate
 {
 	var bf:Boyfriend;
@@ -66,8 +69,16 @@ class GameOverSubstate extends MusicBeatSubstate
 
 			if (PlayState.isStoryMode)
 				FlxG.switchState(new StoryMenuState());
-			else
-				FlxG.switchState(new FreeplayState());
+			else{
+				var parsed:Dynamic = CoolUtil.parseJson(File.getContent('assets/data/freeplaySongJson.jsonc'));
+
+				if(parsed.length==1){
+					FreeplayState.id = 0;
+					FlxG.switchState(new FreeplayState());
+				}else{
+					FlxG.switchState(new FreeplayCategory());
+				}
+			}
 			PlayState.loadRep = false;
 		}
 

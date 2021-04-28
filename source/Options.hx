@@ -8,6 +8,7 @@ import openfl.Lib;
 
 class OptionCatagory
 {
+	
 	private var _options:Array<Option> = new Array<Option>();
 	public final function getOptions():Array<Option>
 	{
@@ -69,10 +70,10 @@ class Option
 	public function right():Bool { return throw "stub!"; }
 }
 
-
-
 class DFJKOption extends Option
 {
+	public static var rotation:Array<String> = ["ASWD","DFJK","JKIL","QWOP","ASKL"];
+	public static var visualRotation:Array<String> = ["WASD","DFJK","IJKL","QWOP","ASKL"];
 	private var controls:Controls;
 
 	public function new(controls:Controls)
@@ -83,12 +84,11 @@ class DFJKOption extends Option
 
 	public override function press():Bool
 	{
-		FlxG.save.data.dfjk = !FlxG.save.data.dfjk;
+		FlxG.save.data.controls =(FlxG.save.data.controls+1)%rotation.length;
 		
-		if (FlxG.save.data.dfjk)
-			controls.setKeyboardScheme(KeyboardScheme.Solo, true);
-		else
-			controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
+
+		controls.setKeyboardScheme(KeyboardScheme.Solo, true,rotation[FlxG.save.data.controls]);
+
 
 		display = updateDisplay();
 		return true;
@@ -96,7 +96,7 @@ class DFJKOption extends Option
 
 	private override function updateDisplay():String
 	{
-		return  FlxG.save.data.dfjk ? "DFJK" : "WASD";
+		return  visualRotation[FlxG.save.data.controls];
 	}
 }
 
@@ -118,27 +118,6 @@ class DownscrollOption extends Option
 	private override function updateDisplay():String
 	{
 		return FlxG.save.data.downscroll ? "Downscroll" : "Upscroll";
-	}
-}
-
-class GhostTapOption extends Option
-{
-	public function new(desc:String)
-	{
-		super();
-		description = desc;
-	}
-
-	public override function press():Bool
-	{
-		FlxG.save.data.ghost = !FlxG.save.data.ghost;
-		display = updateDisplay();
-		return true;
-	}
-
-	private override function updateDisplay():String
-	{
-		return FlxG.save.data.ghost ? "Ghost Tapping" : "No Ghost Tapping";
 	}
 }
 
@@ -214,11 +193,11 @@ class Judgement extends Option
 		Conductor.recalculateTimings();
 
 		OptionsMenu.versionShit.text = "Current Safe Frames: " + Conductor.safeFrames + " - Description - " + description + 
-		" - SIK: " + HelperFunctions.truncateFloat(45 * Conductor.timeScale, 0) +
-		"ms GD: " + HelperFunctions.truncateFloat(90 * Conductor.timeScale, 0) +
-		"ms BD: " + HelperFunctions.truncateFloat(135 * Conductor.timeScale, 0) + 
-		"ms SHT: " + HelperFunctions.truncateFloat(155 * Conductor.timeScale, 0) +
-		"ms TOTAL: " + HelperFunctions.truncateFloat(Conductor.safeZoneOffset,0) + "ms";
+		" - SIK: " + OptionsMenu.truncateFloat(45 * Conductor.timeScale, 0) +
+		"ms GD: " + OptionsMenu.truncateFloat(90 * Conductor.timeScale, 0) +
+		"ms BD: " + OptionsMenu.truncateFloat(135 * Conductor.timeScale, 0) + 
+		"ms SHT: " + OptionsMenu.truncateFloat(155 * Conductor.timeScale, 0) +
+		"ms TOTAL: " + OptionsMenu.truncateFloat(Conductor.safeZoneOffset,0) + "ms";
 		return true;
 	}
 
@@ -233,11 +212,11 @@ class Judgement extends Option
 		Conductor.recalculateTimings();
 
 		OptionsMenu.versionShit.text = "Current Safe Frames: " + Conductor.safeFrames + " - Description - " + description + 
-		" - SIK: " + HelperFunctions.truncateFloat(44 * Conductor.timeScale, 0) +
-		"ms GD: " + HelperFunctions.truncateFloat(45 * Conductor.timeScale, 0) +
-		"ms BD: " + HelperFunctions.truncateFloat(90 * Conductor.timeScale, 0) + 
-		"ms SHT: " + HelperFunctions.truncateFloat(135 * Conductor.timeScale, 0) +
-		"ms TOTAL: " + HelperFunctions.truncateFloat(Conductor.safeZoneOffset,0) + "ms";
+		" - SIK: " + OptionsMenu.truncateFloat(45 * Conductor.timeScale, 0) +
+		"ms GD: " + OptionsMenu.truncateFloat(90 * Conductor.timeScale, 0) +
+		"ms BD: " + OptionsMenu.truncateFloat(135 * Conductor.timeScale, 0) + 
+		"ms SHT: " + OptionsMenu.truncateFloat(155 * Conductor.timeScale, 0) +
+		"ms TOTAL: " + OptionsMenu.truncateFloat(Conductor.safeZoneOffset,0) + "ms";
 		return true;
 	}
 }
@@ -335,7 +314,7 @@ class ScrollSpeedOption extends Option
 		if (FlxG.save.data.scrollSpeed > 10)
 			FlxG.save.data.scrollSpeed = 10;
 
-		OptionsMenu.versionShit.text = "Current Scroll Speed: " + HelperFunctions.truncateFloat(FlxG.save.data.scrollSpeed,1) + " - Description - " + description;
+		OptionsMenu.versionShit.text = "Current Scroll Speed: " + OptionsMenu.truncateFloat(FlxG.save.data.scrollSpeed,1) + " - Description - " + description;
 		return true;
 	}
 
@@ -349,7 +328,7 @@ class ScrollSpeedOption extends Option
 			FlxG.save.data.scrollSpeed = 10;
 
 
-		OptionsMenu.versionShit.text = "Current Scroll Speed: " + HelperFunctions.truncateFloat(FlxG.save.data.scrollSpeed,1) + " - Description - " + description;
+		OptionsMenu.versionShit.text = "Current Scroll Speed: " + OptionsMenu.truncateFloat(FlxG.save.data.scrollSpeed,1) + " - Description - " + description;
 		return true;
 	}
 }

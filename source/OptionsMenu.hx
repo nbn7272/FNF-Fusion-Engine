@@ -22,7 +22,6 @@ class OptionsMenu extends MusicBeatState
 	var options:Array<OptionCatagory> = [
 		new OptionCatagory("Gameplay", [
 			new DFJKOption(controls),
-			new GhostTapOption("Ghost Tapping is when you tap a direction and it doesn't give you a miss."),
 			new Judgement("Customize your Hit Timings (LEFT or RIGHT)"),
 			#if desktop
 			new FPSCapOption("Cap your FPS (Left for -10, Right for +10. SHIFT to go faster)"),
@@ -94,6 +93,12 @@ class OptionsMenu extends MusicBeatState
 
 	var isCat:Bool = false;
 	
+	public static function truncateFloat( number : Float, precision : Int): Float {
+		var num = number;
+		num = num * Math.pow(10, precision);
+		num = Math.round( num ) / Math.pow(10, precision);
+		return num;
+		}
 
 	override function update(elapsed:Float)
 	{
@@ -154,7 +159,7 @@ class OptionsMenu extends MusicBeatState
 					else if (FlxG.keys.pressed.LEFT)
 						FlxG.save.data.offset -= 0.1;
 					
-					versionShit.text = "Offset (Left, Right, Shift for slow): " + HelperFunctions.truncateFloat(FlxG.save.data.offset,2) + " - Description - " + currentDescription;
+					versionShit.text = "Offset (Left, Right, Shift for slow): " + truncateFloat(FlxG.save.data.offset,2) + " - Description - " + currentDescription;
 				}
 			}
 			else
@@ -171,7 +176,7 @@ class OptionsMenu extends MusicBeatState
 					else if (FlxG.keys.pressed.LEFT)
 						FlxG.save.data.offset -= 0.1;
 				
-				versionShit.text = "Offset (Left, Right, Shift for slow): " + HelperFunctions.truncateFloat(FlxG.save.data.offset,2) + " - Description - " + currentDescription;
+				versionShit.text = "Offset (Left, Right, Shift for slow): " + truncateFloat(FlxG.save.data.offset,2) + " - Description - " + currentDescription;
 			}
 		
 
@@ -229,7 +234,7 @@ class OptionsMenu extends MusicBeatState
 			currentDescription = currentSelectedCat.getOptions()[curSelected].getDescription();
 		else
 			currentDescription = "Please select a catagory";
-		versionShit.text = "Offset (Left, Right, Shift for slow): " + HelperFunctions.truncateFloat(FlxG.save.data.offset,2) + " - Description - " + currentDescription;
+		versionShit.text = "Offset (Left, Right, Shift for slow): " + truncateFloat(FlxG.save.data.offset,2) + " - Description - " + currentDescription;
 
 		// selector.y = (70 * curSelected) + 30;
 

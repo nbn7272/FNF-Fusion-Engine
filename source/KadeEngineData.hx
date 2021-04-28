@@ -11,8 +11,8 @@ class KadeEngineData
 		if (FlxG.save.data.downscroll == null)
 			FlxG.save.data.downscroll = false;
 
-		if (FlxG.save.data.dfjk == null)
-			FlxG.save.data.dfjk = false;
+		if (FlxG.save.data.controls == null)
+			FlxG.save.data.controls = "wasd";
 			
 		if (FlxG.save.data.accuracyDisplay == null)
 			FlxG.save.data.accuracyDisplay = true;
@@ -59,9 +59,6 @@ class KadeEngineData
 
 		if (FlxG.save.data.watermark == null)
 			FlxG.save.data.watermark = true;
-
-		if (FlxG.save.data.ghost == null)
-			FlxG.save.data.ghost = true;
 
 		Conductor.recalculateTimings();
 

@@ -13,7 +13,9 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import io.newgrounds.NG;
 import lime.app.Application;
-
+#if sys
+import sys.io.File;
+#end
 #if windows
 import Discord.DiscordClient;
 #end
@@ -22,6 +24,7 @@ using StringTools;
 
 class MainMenuState extends MusicBeatState
 {
+	public static var rotation:Array<String> = ["ASWD","DFJK","JKIL","QWOP","ASKL"];
 	var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
@@ -38,7 +41,7 @@ class MainMenuState extends MusicBeatState
 
 	public static var nightly:String = "";
 
-	public static var kadeEngineVer:String = "1.4.2" + nightly;
+	public static var kadeEngineVer:String = "1.0.0" + nightly;
 	public static var gameVer:String = "0.2.7.1";
 
 	var magenta:FlxSprite;
@@ -110,11 +113,10 @@ class MainMenuState extends MusicBeatState
 
 		// NG.core.calls.event.logEvent('swag').send();
 
+		
 
-		if (FlxG.save.data.dfjk)
-			controls.setKeyboardScheme(KeyboardScheme.Solo, true);
-		else
-			controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
+			controls.setKeyboardScheme(KeyboardScheme.Solo, true,rotation[FlxG.save.data.controls]);
+
 
 		changeItem();
 
@@ -190,7 +192,14 @@ class MainMenuState extends MusicBeatState
 										FlxG.switchState(new StoryMenuState());
 										trace("Story Menu Selected");
 									case 'freeplay':
-										FlxG.switchState(new FreeplayState());
+										var parsed:Dynamic = CoolUtil.parseJson(File.getContent('assets/data/freeplaySongJson.jsonc'));
+
+										if(parsed.length==1){
+											FreeplayState.id = 0;
+											FlxG.switchState(new FreeplayState());
+										}else{
+											FlxG.switchState(new FreeplayCategory());
+										}
 
 										trace("Freeplay Menu Selected");
 

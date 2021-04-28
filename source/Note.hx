@@ -4,12 +4,20 @@ import flixel.addons.effects.FlxSkewedSprite;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
+import flash.display.BitmapData;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 #if polymod
 import polymod.format.ParseRules.TargetSignatureElement;
 #end
-
+#if sys
+import sys.io.File;
+import sys.FileSystem;
+import haxe.io.Path;
+import openfl.utils.ByteArray;
+import lime.media.AudioBuffer;
+import flash.media.Sound;
+#end
 using StringTools;
 
 class Note extends FlxSprite
@@ -20,6 +28,7 @@ class Note extends FlxSprite
 	public var noteData:Int = 0;
 	public var canBeHit:Bool = false;
 	public var tooLate:Bool = false;
+	private var isPixel:Bool = false;
 	public var wasGoodHit:Bool = false;
 	public var prevNote:Note;
 	public var modifiedByLua:Bool = false;
@@ -36,7 +45,7 @@ class Note extends FlxSprite
 
 	public var rating:String = "shit";
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?customImage:Null<BitmapData>, ?customXml:Null<String>, ?customEnds:Null<BitmapData>)
 	{
 		super();
 
@@ -58,11 +67,11 @@ class Note extends FlxSprite
 
 		var daStage:String = PlayState.curStage;
 
-		switch (daStage)
+		switch (PlayState.SONG.uiType)
 		{
-			case 'school' | 'schoolEvil':
-				loadGraphic(Paths.image('weeb/pixelUI/arrows-pixels'), true, 17, 17);
-
+			case 'pixel':
+				loadGraphic('assets/images/weeb/pixelUI/arrows-pixels.png', true, 17, 17);
+				isPixel = true;
 				animation.add('greenScroll', [6]);
 				animation.add('redScroll', [7]);
 				animation.add('blueScroll', [5]);
@@ -70,7 +79,7 @@ class Note extends FlxSprite
 
 				if (isSustainNote)
 				{
-					loadGraphic(Paths.image('weeb/pixelUI/arrowEnds'), true, 7, 6);
+					loadGraphic('assets/images/weeb/pixelUI/arrowEnds.png', true, 7, 6);
 
 					animation.add('purpleholdend', [4]);
 					animation.add('greenholdend', [6]);
@@ -85,9 +94,8 @@ class Note extends FlxSprite
 
 				setGraphicSize(Std.int(width * PlayState.daPixelZoom));
 				updateHitbox();
-
-			default:
-				frames = Paths.getSparrowAtlas('NOTE_assets');
+			case 'normal':
+				frames = FlxAtlasFrames.fromSparrow('assets/images/NOTE_assets.png', 'assets/images/NOTE_assets.xml');
 
 				animation.addByPrefix('greenScroll', 'green0');
 				animation.addByPrefix('redScroll', 'red0');
@@ -107,7 +115,81 @@ class Note extends FlxSprite
 				setGraphicSize(Std.int(width * 0.7));
 				updateHitbox();
 				antialiasing = true;
+			default:
+				if (FileSystem.exists('assets/images/custom_ui/ui_packs/'+PlayState.SONG.uiType+"/NOTE_assets.xml") && FileSystem.exists('assets/images/custom_ui/ui_packs/'+PlayState.SONG.uiType+"/NOTE_assets.png")) {
+
+
+					frames = FlxAtlasFrames.fromSparrow(customImage, customXml);
+					animation.addByPrefix('greenScroll', 'green0');
+	 				animation.addByPrefix('redScroll', 'red0');
+	 				animation.addByPrefix('blueScroll', 'blue0');
+	 				animation.addByPrefix('purpleScroll', 'purple0');
+
+	 				animation.addByPrefix('purpleholdend', 'pruple end hold');
+	 				animation.addByPrefix('greenholdend', 'green hold end');
+	 				animation.addByPrefix('redholdend', 'red hold end');
+	 				animation.addByPrefix('blueholdend', 'blue hold end');
+
+	 				animation.addByPrefix('purplehold', 'purple hold piece');
+	 				animation.addByPrefix('greenhold', 'green hold piece');
+	 				animation.addByPrefix('redhold', 'red hold piece');
+	 				animation.addByPrefix('bluehold', 'blue hold piece');
+
+	 				setGraphicSize(Std.int(width * 0.7));
+	 				updateHitbox();
+	 				antialiasing = true;
+					// when arrowsEnds != arrowEnds :laughing_crying:
+				} else if (FileSystem.exists('assets/images/custom_ui/ui_packs/'+PlayState.SONG.uiType+"/arrows-pixels.png") && FileSystem.exists('assets/images/custom_ui/ui_packs/'+PlayState.SONG.uiType+"/arrowEnds.png")){
+					loadGraphic(customImage, true, 17, 17);
+					animation.add('greenScroll', [6]);
+					animation.add('redScroll', [7]);
+					animation.add('blueScroll', [5]);
+					animation.add('purpleScroll', [4]);
+					isPixel = true;
+					if (isSustainNote)
+					{
+						var noteEndPic = BitmapData.fromFile('assets/images/custom_ui/ui_packs/'+PlayState.SONG.uiType+"/arrowEnds.png");
+						loadGraphic(noteEndPic, true, 7, 6);
+
+						animation.add('purpleholdend', [4]);
+						animation.add('greenholdend', [6]);
+						animation.add('redholdend', [7]);
+						animation.add('blueholdend', [5]);
+
+						animation.add('purplehold', [0]);
+						animation.add('greenhold', [2]);
+						animation.add('redhold', [3]);
+						animation.add('bluehold', [1]);
+					}
+
+					setGraphicSize(Std.int(width * PlayState.daPixelZoom));
+					updateHitbox();
+				} else {
+					// no crashing today :)
+					trace(PlayState.SONG.uiType);
+					frames = FlxAtlasFrames.fromSparrow('assets/images/NOTE_assets.png', 'assets/images/NOTE_assets.xml');
+
+					animation.addByPrefix('greenScroll', 'green0');
+					animation.addByPrefix('redScroll', 'red0');
+					animation.addByPrefix('blueScroll', 'blue0');
+					animation.addByPrefix('purpleScroll', 'purple0');
+
+					animation.addByPrefix('purpleholdend', 'pruple end hold');
+					animation.addByPrefix('greenholdend', 'green hold end');
+					animation.addByPrefix('redholdend', 'red hold end');
+					animation.addByPrefix('blueholdend', 'blue hold end');
+
+					animation.addByPrefix('purplehold', 'purple hold piece');
+					animation.addByPrefix('greenhold', 'green hold piece');
+					animation.addByPrefix('redhold', 'red hold piece');
+					animation.addByPrefix('bluehold', 'blue hold piece');
+
+					setGraphicSize(Std.int(width * 0.7));
+					updateHitbox();
+					antialiasing = true;
+				}
 		}
+
 
 		switch (noteData)
 		{
@@ -156,7 +238,7 @@ class Note extends FlxSprite
 
 			x -= width / 2;
 
-			if (PlayState.curStage.startsWith('school'))
+			if (isPixel)
 				x += 30;
 
 			if (prevNote.isSustainNote)
@@ -174,10 +256,7 @@ class Note extends FlxSprite
 				}
 
 				
-				if(FlxG.save.data.scrollSpeed != 1)
-					prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * FlxG.save.data.scrollSpeed;
-				else
-					prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
+				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.8 * FlxG.save.data.scrollSpeed;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}
@@ -191,13 +270,13 @@ class Note extends FlxSprite
 		if (mustPress)
 		{
 			// The * 0.5 is so that it's easier to hit them too late, instead of too early
-			if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
+			if (strumTime > Conductor.songPosition - Conductor.safeZoneOffset
 				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
 				canBeHit = true;
 			else
 				canBeHit = false;
 
-			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset * Conductor.timeScale && !wasGoodHit)
+			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit)
 				tooLate = true;
 		}
 		else

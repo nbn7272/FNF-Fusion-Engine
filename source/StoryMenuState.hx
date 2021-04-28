@@ -16,46 +16,32 @@ import lime.net.curl.CURLCode;
 #if windows
 import Discord.DiscordClient;
 #end
-
+#if sys
+import sys.io.File;
+#end
 using StringTools;
-
+typedef StorySongsJson = {
+	var songs: Array<Array<String>>;
+	var weekNames: Array<String>;
+	var characters: Array<Array<String>>;
+}
+typedef DifficultysJson = {
+	var difficulties:Array<Dynamic>;
+	var defaultDiff:Int;
+}
 class StoryMenuState extends MusicBeatState
 {
 	var scoreText:FlxText;
 
-	var weekData:Array<Dynamic> = [
-		['Tutorial'],
-		['Bopeebo', 'Fresh', 'Dadbattle'],
-		['Spookeez', 'South', "Monster"],
-		['Pico', 'Philly', "Blammed"],
-		['Satin-Panties', "High", "Milf"],
-		['Cocoa', 'Eggnog', 'Winter-Horrorland'],
-		['Senpai', 'Roses', 'Thorns']
-	];
+	var weekData:Array<Dynamic> = [];
 	var curDifficulty:Int = 1;
 
 	public static var weekUnlocked:Array<Bool> = [true, true, true, true, true, true, true];
 
-	var weekCharacters:Array<Dynamic> = [
-		['', 'bf', 'gf'],
-		['dad', 'bf', 'gf'],
-		['spooky', 'bf', 'gf'],
-		['pico', 'bf', 'gf'],
-		['mom', 'bf', 'gf'],
-		['parents-christmas', 'bf', 'gf'],
-		['senpai', 'bf', 'gf']
-	];
+	var weekCharacters:Array<Dynamic> = [];
 
-	var weekNames:Array<String> = [
-		"How to Funk",
-		"Daddy Dearest",
-		"Spooky Month",
-		"PICO",
-		"MOMMY MUST MURDER",
-		"RED SNOW",
-		"Hating Simulator ft. Moawling"
-	];
-
+	var weekNames:Array<String> = [];
+	var weekTitles:Array<String> = [];
 	var txtWeekTitle:FlxText;
 
 	var curWeek:Int = 0;
@@ -87,7 +73,29 @@ class StoryMenuState extends MusicBeatState
 			if (!FlxG.sound.music.playing)
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 		}
-
+		var storySongJson:StorySongsJson = CoolUtil.parseJson(File.getContent('assets/data/storySonglist.json'));
+		persistentUpdate = persistentDraw = true;
+		for (storySongList in storySongJson.songs) {
+			var weekSongs = [];
+			for (song in storySongList) {
+				if (storySongList[0] == song) {
+					weekNames.push(song);
+				} else {
+					weekSongs.push(song);
+				}
+			}
+			weekData.push(weekSongs);
+		}
+		for (weekTitle in storySongJson.weekNames) {
+			weekTitles.push(weekTitle);
+		}
+		for (storyCharList in storySongJson.characters) {
+			var weekChars = [];
+			for (char in storyCharList) {
+				weekChars.push(char);
+			}
+			weekCharacters.push(weekChars);
+		}
 		persistentUpdate = persistentDraw = true;
 
 		scoreText = new FlxText(10, 10, 0, "SCORE: 49324858", 36);
@@ -103,7 +111,7 @@ class StoryMenuState extends MusicBeatState
 		rankText.size = scoreText.size;
 		rankText.screenCenter(X);
 
-		var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
+		var ui_tex = FlxAtlasFrames.fromSparrow('assets/images/campaign_menu_UI_assets.png', 'assets/images/campaign_menu_UI_assets.xml');
 		var yellowBG:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width, 400, 0xFFF9CF51);
 
 		grpWeekText = new FlxTypedGroup<MenuItem>();
@@ -131,16 +139,8 @@ class StoryMenuState extends MusicBeatState
 			// weekThing.updateHitbox();
 
 			// Needs an offset thingie
-			if (!weekUnlocked[i])
-			{
-				var lock:FlxSprite = new FlxSprite(weekThing.width + 10 + weekThing.x);
-				lock.frames = ui_tex;
-				lock.animation.addByPrefix('lock', 'lock');
-				lock.animation.play('lock');
-				lock.ID = i;
-				lock.antialiasing = true;
-				grpLocks.add(lock);
-			}
+
+			
 		}
 
 		trace("Line 96");
@@ -211,7 +211,7 @@ class StoryMenuState extends MusicBeatState
 
 		// FlxG.watch.addQuick('font', scoreText.font);
 
-		difficultySelectors.visible = weekUnlocked[curWeek];
+		difficultySelectors.visible = true;
 
 		grpLocks.forEach(function(lock:FlxSprite)
 		{
@@ -270,8 +270,8 @@ class StoryMenuState extends MusicBeatState
 
 	function selectWeek()
 	{
-		if (weekUnlocked[curWeek])
-		{
+		
+		
 			if (stopspamming == false)
 			{
 				FlxG.sound.play(Paths.sound('confirmMenu'));
@@ -304,7 +304,7 @@ class StoryMenuState extends MusicBeatState
 			{
 				LoadingState.loadAndSwitchState(new PlayState(), true);
 			});
-		}
+		
 	}
 
 	function changeDifficulty(change:Int = 0):Void
@@ -361,7 +361,7 @@ class StoryMenuState extends MusicBeatState
 		for (item in grpWeekText.members)
 		{
 			item.targetY = bullShit - curWeek;
-			if (item.targetY == Std.int(0) && weekUnlocked[curWeek])
+			if (item.targetY == Std.int(0))
 				item.alpha = 1;
 			else
 				item.alpha = 0.6;

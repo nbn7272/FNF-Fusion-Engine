@@ -10,21 +10,37 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import lime.utils.Assets;
 
+#if sys
+import sys.io.File;
 
+import flash.media.Sound;
+#end
 #if windows
 import Discord.DiscordClient;
 #end
 
 using StringTools;
+class SongMetadatas
+{
+	public var songName:String = "";
+	public var week:Int = 0;
+	public var songCharacter:String = "";
+
+	public function new(song:String, week:Int, songCharacter:String)
+	{
+		this.songName = song;
+		this.week = week;
+		this.songCharacter = songCharacter;
+	}
+}
 
 class FreeplayState extends MusicBeatState
 {
-	var songs:Array<SongMetadata> = [];
-
+	var songs:Array<SongMetadatas> = [];
 	var selector:FlxText;
 	var curSelected:Int = 0;
 	var curDifficulty:Int = 1;
-
+	public static var id:Int = 1;
 	var scoreText:FlxText;
 	var diffText:FlxText;
 	var lerpScore:Int = 0;
@@ -33,16 +49,14 @@ class FreeplayState extends MusicBeatState
 	private var grpSongs:FlxTypedGroup<Alphabet>;
 	private var curPlaying:Bool = false;
 
-	private var iconArray:Array<HealthIcon> = [];
-
 	override function create()
 	{
-		var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
-
+		var parsed = CoolUtil.parseJson(File.getContent('assets/data/freeplaySongJson.jsonc'));
+		var initSonglist:Dynamic = parsed[id].songs;
 		for (i in 0...initSonglist.length)
 		{
-			var data:Array<String> = initSonglist[i].split(':');
-			songs.push(new SongMetadata(data[0], Std.parseInt(data[2]), data[1]));
+
+			songs.push(new SongMetadatas(initSonglist[i], 1, "bf"));
 		}
 
 		/* 
@@ -81,12 +95,9 @@ class FreeplayState extends MusicBeatState
 			songText.targetY = i;
 			grpSongs.add(songText);
 
-			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
-			icon.sprTracker = songText;
 
-			// using a FlxGroup is too much fuss!
-			iconArray.push(icon);
-			add(icon);
+
+
 
 			// songText.x += 40;
 			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
@@ -95,7 +106,7 @@ class FreeplayState extends MusicBeatState
 
 		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
 		// scoreText.autoSize = false;
-		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT);
+		scoreText.setFormat("assets/fonts/vcr.ttf", 32, FlxColor.WHITE, RIGHT);
 		// scoreText.alignment = RIGHT;
 
 		var scoreBG:FlxSprite = new FlxSprite(scoreText.x - 6, 0).makeGraphic(Std.int(FlxG.width * 0.35), 66, 0xFF000000);
@@ -143,7 +154,7 @@ class FreeplayState extends MusicBeatState
 
 	public function addSong(songName:String, weekNum:Int, songCharacter:String)
 	{
-		songs.push(new SongMetadata(songName, weekNum, songCharacter));
+		songs.push(new SongMetadatas(songName, weekNum, songCharacter));
 	}
 
 	public function addWeek(songs:Array<String>, weekNum:Int, ?songCharacters:Array<String>)
@@ -197,7 +208,13 @@ class FreeplayState extends MusicBeatState
 
 		if (controls.BACK)
 		{
-			FlxG.switchState(new MainMenuState());
+			var parsed:Dynamic = CoolUtil.parseJson(File.getContent('assets/data/freeplaySongJson.jsonc'));
+
+			if(parsed.length==1){
+				FlxG.switchState(new MainMenuState());
+			}else{
+				FlxG.switchState(new FreeplayCategory());
+			}
 		}
 
 		if (accepted)
@@ -268,12 +285,6 @@ class FreeplayState extends MusicBeatState
 
 		var bullShit:Int = 0;
 
-		for (i in 0...iconArray.length)
-		{
-			iconArray[i].alpha = 0.6;
-		}
-
-		iconArray[curSelected].alpha = 1;
 
 		for (item in grpSongs.members)
 		{
@@ -292,16 +303,3 @@ class FreeplayState extends MusicBeatState
 	}
 }
 
-class SongMetadata
-{
-	public var songName:String = "";
-	public var week:Int = 0;
-	public var songCharacter:String = "";
-
-	public function new(song:String, week:Int, songCharacter:String)
-	{
-		this.songName = song;
-		this.week = week;
-		this.songCharacter = songCharacter;
-	}
-}
