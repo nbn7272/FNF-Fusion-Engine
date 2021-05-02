@@ -80,6 +80,7 @@ class DFJKOption extends Option
 	{
 		super();
 		this.controls = controls;
+		updateDisplay();
 	}
 
 	public override function press():Bool
@@ -99,7 +100,44 @@ class DFJKOption extends Option
 		return  visualRotation[FlxG.save.data.controls];
 	}
 }
+class NewInputOption extends Option{
 
+	public function new(desc:String){
+		super();
+		description = desc;
+		updateDisplay();
+	}
+	private override function updateDisplay():String
+		{
+			return FlxG.save.data.newInput ? "New Input" : "Improved 	Old Input";
+		}
+	
+		public override function press():Bool
+			{
+				FlxG.save.data.newInput = !FlxG.save.data.newInput;
+				display = updateDisplay();
+				return true;
+			}
+}
+class ResetKey extends Option{
+
+	public function new(desc:String){
+		super();
+		description = desc;
+		updateDisplay();
+	}
+	private override function updateDisplay():String
+		{
+			return "Reset Key "+ (FlxG.save.data.resetKey ? "Enabled" : "Disabled");
+		}
+	
+		public override function press():Bool
+			{
+				FlxG.save.data.resetKey = !FlxG.save.data.resetKey;
+				display = updateDisplay();
+				return true;
+			}
+}
 class DownscrollOption extends Option
 {
 	public function new(desc:String)
@@ -408,14 +446,15 @@ class AccuracyDOption extends Option
 	
 	public override function press():Bool
 	{
-		FlxG.save.data.accuracyMod = FlxG.save.data.accuracyMod == 1 ? 0 : 1;
+		FlxG.save.data.accuracyMod +=1;
+		FlxG.save.data.accuracyMod = FlxG.save.data.accuracyMod%3;
 		display = updateDisplay();
 		return true;
 	}
 
 	private override function updateDisplay():String
 	{
-		return "Accuracy Mode: " + (FlxG.save.data.accuracyMod == 0 ? "Accurate" : "Complex");
+		return "Accuracy Mode: " + (FlxG.save.data.accuracyMod == 0 ? "Accurate" : (FlxG.save.data.accuracyMod == 1 ? "Complex" : "Binary"));
 	}
 }
 

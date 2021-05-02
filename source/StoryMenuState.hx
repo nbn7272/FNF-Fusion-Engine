@@ -34,6 +34,7 @@ class StoryMenuState extends MusicBeatState
 	var scoreText:FlxText;
 
 	var weekData:Array<Dynamic> = [];
+	var lastWeek:Int = 0;
 	var curDifficulty:Int = 1;
 
 	public static var weekUnlocked:Array<Bool> = [true, true, true, true, true, true, true];
@@ -45,6 +46,7 @@ class StoryMenuState extends MusicBeatState
 	var txtWeekTitle:FlxText;
 
 	var curWeek:Int = 0;
+	var weekCharactersArray:FlxTypedGroup<FlxTypedGroup<MenuCharacter>>;
 
 	var txtTracklist:FlxText;
 
@@ -124,30 +126,76 @@ class StoryMenuState extends MusicBeatState
 
 		grpLocks = new FlxTypedGroup<FlxSprite>();
 		add(grpLocks);
-
+		weekCharactersArray = new FlxTypedGroup<FlxTypedGroup<MenuCharacter>>();
 		trace("Line 70");
 
 		for (i in 0...weekData.length)
-		{
-			var weekThing:MenuItem = new MenuItem(0, yellowBG.y + yellowBG.height + 10, i);
-			weekThing.y += ((weekThing.height + 20) * i);
-			weekThing.targetY = i;
-			grpWeekText.add(weekThing);
-
-			weekThing.screenCenter(X);
-			weekThing.antialiasing = true;
-			// weekThing.updateHitbox();
-
-			// Needs an offset thingie
-
-			
-		}
+			{
+				var weekThing:MenuItem = new MenuItem(0, yellowBG.y + yellowBG.height + 10, i);
+				weekThing.y += ((weekThing.height + 20) * i);
+				weekThing.targetY = i;
+				grpWeekText.add(weekThing);
+	
+				weekThing.screenCenter(X);
+				weekThing.antialiasing = true;
+				var group = new FlxTypedGroup<MenuCharacter>();
+				trace("before new group");
+	
+				weekCharactersArray.add(group);
+				trace("after new group");
+				for (char in 0...3)
+				{
+					var weekCharacterThing:MenuCharacter = new MenuCharacter((FlxG.width * 0.25) * (1 + char) - 150, weekCharacters[i][char]);
+					weekCharacterThing.y += 70;
+					weekCharacterThing.antialiasing = true;
+					switch (weekCharacterThing.like)
+					{
+						case 'dad':
+							weekCharacterThing.setGraphicSize(Std.int(weekCharacterThing.width * 0.5));
+							weekCharacterThing.updateHitbox();
+							trace("like dad?");
+						case 'bf':
+							weekCharacterThing.setGraphicSize(Std.int(weekCharacterThing.width * 0.9));
+							weekCharacterThing.updateHitbox();
+							weekCharacterThing.x -= 80;
+							trace("like bf?");
+						case 'gf':
+							weekCharacterThing.setGraphicSize(Std.int(weekCharacterThing.width * 0.5));
+							weekCharacterThing.updateHitbox();
+							trace("like gf?");
+						case 'pico':
+							weekCharacterThing.y += 40;
+							weekCharacterThing.flipX = true;
+							weekCharacterThing.x -= 40;
+							weekCharacterThing.setGraphicSize(Std.int(weekCharacterThing.width * 0.6));
+							weekCharacterThing.updateHitbox();
+							trace("like pico?");
+						case 'parents-christmas':
+							weekCharacterThing.x -= 150;
+							weekCharacterThing.setGraphicSize(Std.int(weekCharacterThing.width * 0.4));
+							weekCharacterThing.updateHitbox();
+							trace("like parents?");
+						case 'mom':
+							weekCharacterThing.setGraphicSize(Std.int(weekCharacterThing.width * 0.45));
+							weekCharacterThing.updateHitbox();
+							trace("like mom?");
+						case 'spooky':
+							weekCharacterThing.y += 30;
+							weekCharacterThing.x -= 30;
+							weekCharacterThing.setGraphicSize(Std.int(weekCharacterThing.width * 0.5));
+							weekCharacterThing.updateHitbox();
+							trace("like spooky kids?");
+					}
+	
+					weekCharactersArray.members[i].add(weekCharacterThing);
+				}
+				if (i != curWeek) {
+					weekCharactersArray.members[i].kill();
+				}
+			}
 
 		trace("Line 96");
 
-		grpWeekCharacters.add(new MenuCharacter(0, 100, 0.5, false));
-		grpWeekCharacters.add(new MenuCharacter(450, 25, 0.9, true));
-		grpWeekCharacters.add(new MenuCharacter(850, 100, 0.5, true));
 
 		difficultySelectors = new FlxGroup();
 		add(difficultySelectors);
@@ -181,7 +229,7 @@ class StoryMenuState extends MusicBeatState
 		trace("Line 150");
 
 		add(yellowBG);
-		add(grpWeekCharacters);
+		add(weekCharactersArray);
 
 		txtTracklist = new FlxText(FlxG.width * 0.05, yellowBG.x + yellowBG.height + 100, 0, "Tracks", 32);
 		txtTracklist.alignment = CENTER;
@@ -271,20 +319,23 @@ class StoryMenuState extends MusicBeatState
 	function selectWeek()
 	{
 		
-		
+			trace("1");
 			if (stopspamming == false)
 			{
 				FlxG.sound.play(Paths.sound('confirmMenu'));
-
+					
 				grpWeekText.members[curWeek].startFlashing();
-				grpWeekCharacters.members[1].animation.play('bfConfirm');
+				
+				weekCharactersArray.members[curWeek].members[1].animation.play('bfConfirm');
 				stopspamming = true;
 			}
 
+			trace("2");
 			PlayState.storyPlaylist = weekData[curWeek];
 			PlayState.isStoryMode = true;
 			selectedWeek = true;
-
+			
+			trace("3");
 			var diffic = "";
 
 			switch (curDifficulty)
@@ -298,10 +349,14 @@ class StoryMenuState extends MusicBeatState
 			PlayState.storyDifficulty = curDifficulty;
 
 			PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + diffic, PlayState.storyPlaylist[0].toLowerCase());
+			
+			trace("4");
 			PlayState.storyWeek = curWeek;
 			PlayState.campaignScore = 0;
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
+				
+			trace("5");
 				LoadingState.loadAndSwitchState(new PlayState(), true);
 			});
 		
@@ -349,6 +404,8 @@ class StoryMenuState extends MusicBeatState
 
 	function changeWeek(change:Int = 0):Void
 	{
+		
+		lastWeek = curWeek;
 		curWeek += change;
 
 		if (curWeek >= weekData.length)
@@ -375,11 +432,35 @@ class StoryMenuState extends MusicBeatState
 
 	function updateText()
 	{
-		grpWeekCharacters.members[0].setCharacter(weekCharacters[curWeek][0]);
-		grpWeekCharacters.members[1].setCharacter(weekCharacters[curWeek][1]);
-		grpWeekCharacters.members[2].setCharacter(weekCharacters[curWeek][2]);
 
+		weekCharactersArray.members[lastWeek].kill();
+		weekCharactersArray.members[curWeek].revive();
 		txtTracklist.text = "Tracks\n";
+
+		switch (weekCharactersArray.members[curWeek].members[0].like)
+		{
+			case 'parents-christmas':
+				weekCharactersArray.members[curWeek].members[0].offset.set(200, 200);
+				weekCharactersArray.members[curWeek].members[0].setGraphicSize(Std.int(weekCharactersArray.members[curWeek].members[0].width * 0.99));
+
+			case 'senpai':
+				weekCharactersArray.members[curWeek].members[0].offset.set(130, 0);
+				weekCharactersArray.members[curWeek].members[0].setGraphicSize(Std.int(weekCharactersArray.members[curWeek].members[0].width * 0.9));
+
+			case 'mom':
+				weekCharactersArray.members[curWeek].members[0].offset.set(100, 200);
+				weekCharactersArray.members[curWeek].members[0].setGraphicSize(Std.int(weekCharactersArray.members[curWeek].members[0].width * 1));
+
+			case 'dad':
+				weekCharactersArray.members[curWeek].members[0].offset.set(120, 200);
+				weekCharactersArray.members[curWeek].members[0].setGraphicSize(Std.int(weekCharactersArray.members[curWeek].members[0].width * 1));
+
+			default:
+				weekCharactersArray.members[curWeek].members[0].offset.set(100, 100);
+				weekCharactersArray.members[curWeek].members[0].setGraphicSize(Std.int(weekCharactersArray.members[curWeek].members[0].width * 1));
+				// weekCharactersArray.members[curWeek].members[0].updateHitbox();
+		}
+
 		var stringThing:Array<String> = weekData[curWeek];
 
 		for (i in stringThing)

@@ -72,6 +72,7 @@ using StringTools;
 
 class PlayState extends MusicBeatState
 {
+	
 	public static var curStage:String = '';
 	public static var SONG:SwagSong;
 	public static var isStoryMode:Bool = false;
@@ -190,7 +191,7 @@ class PlayState extends MusicBeatState
 
 	public static var daPixelZoom:Float = 6;
 
-	public static var theFunne:Bool = true;
+	public static var isNew:Bool = true;
 	var funneEffect:FlxSprite;
 	var inCutscene:Bool = false;
 	public static var repPresses:Int = 0;
@@ -407,6 +408,7 @@ class PlayState extends MusicBeatState
 	override public function create()
 	{
 
+		isNew = FlxG.save.data.newInput;
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
@@ -846,7 +848,7 @@ class PlayState extends MusicBeatState
 				add(stageCurtains);
 			} else {
 				// use assets
-				var parsedStageJson = CoolUtil.parseJson(Assets.getText("assets/images/custom_stages/custom_stages.json"));
+				var parsedStageJson = CoolUtil.parseJson(File.getContent("assets/images/custom_stages/custom_stages.json"));
 				switch (Reflect.field(parsedStageJson, SONG.stage)) {
 					case 'stage':
 						defaultCamZoom = 0.9;
@@ -2965,6 +2967,9 @@ class PlayState extends MusicBeatState
 
 	override public function update(elapsed:Float)
 	{
+		if(controls.RESET && FlxG.save.data.resetKey){
+			FlxG.resetState();
+		}
 		#if !debug
 		perfectMode = false;
 		#end
@@ -3509,20 +3514,21 @@ class PlayState extends MusicBeatState
 	
 					if ((daNote.y < -daNote.height && !FlxG.save.data.downscroll || daNote.y >= strumLine.y + 106 && FlxG.save.data.downscroll) && daNote.mustPress)
 					{
-						if (daNote.isSustainNote && daNote.wasGoodHit)
-						{
-							daNote.kill();
-							notes.remove(daNote, true);
-							daNote.destroy();
-						}
-						else
-						{
-							health -= 0.075;
-							vocals.volume = 0;
-							if (theFunne)
+
+							if (daNote.isSustainNote && daNote.wasGoodHit)
+							{
+								daNote.kill();
+								notes.remove(daNote, true);
+								daNote.destroy();
+							}
+							else
+							{
+								health -= 0.075;
+								vocals.volume = 0;
+
 								noteMiss(daNote.noteData, daNote);
-						}
-	
+							}
+						
 						daNote.active = false;
 						daNote.visible = false;
 	
@@ -3684,47 +3690,49 @@ class PlayState extends MusicBeatState
 			var rating:FlxSprite = new FlxSprite();
 			var score:Float = 350;
 
-			if (FlxG.save.data.accuracyMod == 1)
+			if (FlxG.save.data.accuracyMod == 1){
 				totalNotesHit += wife;
-
-			var daRating = daNote.rating;
-
-			switch(daRating)
-			{
-				case 'shit':
-					score = -300;
-					combo = 0;
-					misses++;
-					health -= 0.2;
-					ss = false;
-					shits++;
-					if (FlxG.save.data.accuracyMod == 0)
-						totalNotesHit += 0.25;
-				case 'bad':
-					daRating = 'bad';
-					score = 0;
-					health -= 0.06;
-					ss = false;
-					bads++;
-					if (FlxG.save.data.accuracyMod == 0)
-						totalNotesHit += 0.50;
-				case 'good':
-					daRating = 'good';
-					score = 200;
-					ss = false;
-					goods++;
-					if (health < 2)
-						health += 0.04;
-					if (FlxG.save.data.accuracyMod == 0)
-						totalNotesHit += 0.75;
-				case 'sick':
-					if (health < 2)
-						health += 0.1;
-					if (FlxG.save.data.accuracyMod == 0)
-						totalNotesHit += 1;
-					sicks++;
+			}else if (FlxG.save.data.accuracyMod == 2){
+				totalNotesHit+=1;
 			}
-
+			var daRating = daNote.rating;
+			
+				switch(daRating)
+				{
+					case 'shit':
+						score = -300;
+						combo = 0;
+						misses++;
+						health -= 0.2;
+						ss = false;
+						shits++;
+						if (FlxG.save.data.accuracyMod == 0)
+							totalNotesHit += 0.25;
+					case 'bad':
+						daRating = 'bad';
+						score = 0;
+						health -= 0.06;
+						ss = false;
+						bads++;
+						if (FlxG.save.data.accuracyMod == 0)
+							totalNotesHit += 0.50;
+					case 'good':
+						daRating = 'good';
+						score = 200;
+						ss = false;
+						goods++;
+						if (health < 2)
+							health += 0.04;
+						if (FlxG.save.data.accuracyMod == 0)
+							totalNotesHit += 0.75;
+					case 'sick':
+						if (health < 2)
+							health += 0.1;
+						if (FlxG.save.data.accuracyMod == 0)
+							totalNotesHit += 1;
+						sicks++;
+				}
+			
 			// trace('Wife accuracy loss: ' + wife + ' | Rating: ' + daRating + ' | Score: ' + score + ' | Weight: ' + (1 - wife));
 
 			if (daRating != 'shit' || daRating != 'bad')
@@ -4072,6 +4080,9 @@ class PlayState extends MusicBeatState
 										if (controlArray[ignoreList[shit]])
 											inIgnoreList = true;
 									}
+									if (!inIgnoreList && !isNew){
+										badNoteCheck(coolNote);		
+									}					
 								}
 							}
 						}
@@ -4144,24 +4155,12 @@ class PlayState extends MusicBeatState
 					}
 					/* 
 						if (controlArray[daNote.noteData])
-							goodNoteHit(daNote);
+
 					 */
 					// trace(daNote.noteData);
 					/* 
 						switch (daNote.noteData)
-						{
-							case 2: // NOTES YOU JUST PRESSED
-								if (upP || rightP || downP || leftP)
-									noteCheck(upP, daNote);
-							case 3:
-								if (upP || rightP || downP || leftP)
-									noteCheck(rightP, daNote);
-							case 1:
-								if (upP || rightP || downP || leftP)
-									noteCheck(downP, daNote);
-							case 0:
-								if (upP || rightP || downP || leftP)
-									noteCheck(leftP, daNote);
+
 						}
 					 */
 					if (daNote.wasGoodHit)
@@ -4170,6 +4169,9 @@ class PlayState extends MusicBeatState
 						notes.remove(daNote, true);
 						daNote.destroy();
 					}
+				}
+				else if(!isNew){
+					badNoteCheck(null);
 				}
 			}
 	
@@ -4320,7 +4322,7 @@ class PlayState extends MusicBeatState
 	}
 
 	function noteMiss(direction:Int = 1, daNote:Note):Void
-	{
+	{	
 		if (!boyfriend.stunned)
 		{
 			health -= 0.04;
@@ -4330,13 +4332,14 @@ class PlayState extends MusicBeatState
 			}
 			combo = 0;
 			misses++;
+			if(daNote != null){
+				var noteDiff:Float = Math.abs(daNote.strumTime - Conductor.songPosition);
+				var wife:Float = EtternaFunctions.wife3(noteDiff, FlxG.save.data.etternaMode ? 1 : 1.7);
 
-			var noteDiff:Float = Math.abs(daNote.strumTime - Conductor.songPosition);
-			var wife:Float = EtternaFunctions.wife3(noteDiff, FlxG.save.data.etternaMode ? 1 : 1.7);
+				if (FlxG.save.data.accuracyMod == 1)
+					totalNotesHit += wife;
 
-			if (FlxG.save.data.accuracyMod == 1)
-				totalNotesHit += wife;
-
+			}
 			songScore -= 10;
 
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
@@ -4359,7 +4362,7 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	/*function badNoteCheck()
+	function badNoteCheck(daNote:Note)
 		{
 			// just double pasting this shit cuz fuk u
 			// REDO THIS SYSTEM!
@@ -4369,21 +4372,25 @@ class PlayState extends MusicBeatState
 			var leftP = controls.LEFT_P;
 	
 			if (leftP)
-				noteMiss(0);
+				noteMiss(0,daNote);
 			if (upP)
-				noteMiss(2);
+				noteMiss(2,daNote);
 			if (rightP)
-				noteMiss(3);
+				noteMiss(3,daNote);
 			if (downP)
-				noteMiss(1);
-			updateAccuracy();
+				noteMiss(1,daNote);
+			if(FlxG.save.data.accuracyMod!=2){
+				updateAccuracy();
+			}
 		}
-	*/
+	
 	function updateAccuracy() 
-		{
-			totalPlayed += 1;
-			accuracy = Math.max(0,totalNotesHit / totalPlayed * 100);
-			accuracyDefault = Math.max(0, totalNotesHitDefault / totalPlayed * 100);
+{
+				totalPlayed += 1;
+				accuracy = Math.max(0,totalNotesHit / totalPlayed * 100);
+				accuracyDefault = Math.max(0, totalNotesHitDefault / totalPlayed * 100);
+			
+			
 		}
 
 
@@ -4411,6 +4418,7 @@ class PlayState extends MusicBeatState
 
 	function noteCheck(controlArray:Array<Bool>, note:Note):Void // sorry lol
 		{
+
 			var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition);
 
 			if (noteDiff > Conductor.safeZoneOffset * 0.70 || noteDiff < Conductor.safeZoneOffset * -0.70)
@@ -4421,7 +4429,7 @@ class PlayState extends MusicBeatState
 				note.rating = "good";
 			else if (noteDiff < Conductor.safeZoneOffset * 0.44 && noteDiff > Conductor.safeZoneOffset * -0.44)
 				note.rating = "sick";
-
+			
 			if (loadRep)
 			{
 				if (controlArray[note.noteData])
@@ -4487,9 +4495,10 @@ class PlayState extends MusicBeatState
 						popUpScore(note);
 						combo += 1;
 					}
-					else
+					else{
+						trace("other?");
 						totalNotesHit += 1;
-	
+					}
 
 					switch (note.noteData)
 					{
