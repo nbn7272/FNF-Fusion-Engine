@@ -16,7 +16,6 @@ Links: **[itch.io page](https://ninja-muffin24.itch.io/funkin) ⋅ [Newgrounds](
 
 
 
-# Screenshots ([skip](#Features))
 
 
 # Features
@@ -27,7 +26,9 @@ Links: **[itch.io page](https://ninja-muffin24.itch.io/funkin) ⋅ [Newgrounds](
 	 - Binary mode bases your accuracy on whether or not you hit the note, rather than the timing.
  - **Easily Port Modding Plus Mods to Fusion in 1 Minute**
 	 - Check out this youtube video on how to do it
-
+#The following features have not been added from modding plus
+ - **Custom difficulty**
+	- The only difficulties are easy, normal, and hard
 # Credits
 ### Friday Night Funkin'
  - [ninjamuffin99](https://twitter.com/ninja_muffin99) - Programming
