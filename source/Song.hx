@@ -7,6 +7,7 @@ import lime.utils.Assets;
 import tjson.TJSON;
 #if sys
 import sys.io.File;
+import sys.FileSystem;
 import lime.system.System;
 import haxe.io.Path;
 #end
@@ -56,21 +57,60 @@ class Song
 		this.bpm = bpm;
 	}
 
-	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
-	{
+	public static function loadFromJson(jsonInput:String, ?folder:String,?difficulty):SwagSong
+	{	
+		trace(jsonInput);
+		trace(folder);
+		trace("canon fodder");
+
 		var rawJson:String = "";
 		if (jsonInput != folder)
-		{
+		{		
+
+			if(difficulty!= null){
+				var storyDifficultyText:String = "";
+				switch (difficulty)
+				{
+					case 0:
+						storyDifficultyText = "-easy";
+					case 2:
+						storyDifficultyText = "-hard";
+				}
+				if(!FileSystem.exists("assets/data/"+ folder.toLowerCase()+"/"+folder.toLowerCase()+storyDifficultyText+".json")){
+					storyDifficultyText ="";
+				}
+				trace(difficulty);
+				trace("assets/data/"+ folder.toLowerCase()+"/"+folder.toLowerCase()+storyDifficultyText+".json");
+				rawJson = File.getContent("assets/data/"+folder.toLowerCase()+"/"+folder.toLowerCase()+storyDifficultyText+".json").trim();
+			}else{
+				
+				rawJson = File.getContent("assets/data/"+folder.toLowerCase()+"/"+folder.toLowerCase()+".json").trim();
+			}
 			// means this isn't normal difficulty
 			// raw json 
 			// folder is always just the song name
-			rawJson = File.getContent("assets/data/"+folder.toLowerCase()+"/"+folder.toLowerCase()+".json").trim();
 		} else {
-			#if sys
+			if(difficulty!= null){
+				var storyDifficultyText:String = "";
+				switch (difficulty)
+				{
+					case 0:
+						storyDifficultyText = "-easy";
+					case 2:
+						storyDifficultyText = "-hard";
+				}
+				if(!FileSystem.exists("assets/data/"+ folder.toLowerCase()+"/"+folder.toLowerCase()+storyDifficultyText+".json")){
+					storyDifficultyText ="";
+				}
+				trace(difficulty);
+				trace("assets/data/"+ folder.toLowerCase()+"/"+folder.toLowerCase()+storyDifficultyText+".json");
+				rawJson = File.getContent("assets/data/"+folder.toLowerCase()+"/"+folder.toLowerCase()+storyDifficultyText+".json").trim();
+			}else{
+				
 			rawJson = File.getContent("assets/data/" + folder.toLowerCase() + "/" + jsonInput.toLowerCase() + '.json').trim();
-			#else
-			rawJson = Assets.getText('assets/data/' + folder.toLowerCase() + '/' + jsonInput.toLowerCase() + '.json').trim();
-			#end
+			}
+
+
 		}
 		while (!rawJson.endsWith("}"))
 		{
@@ -181,6 +221,17 @@ class Song
 		{
 			// means this isn't normal difficulty
 			// lets finally overwrite notes
+							var storyDifficultyText:String = "";
+				switch (difficulty)
+				{
+					case 0:
+						storyDifficultyText = "-easy";
+					case 2:
+						storyDifficultyText = "-hard";
+				}
+				if(!FileSystem.exists("assets/data/"+ folder.toLowerCase()+"/"+folder.toLowerCase()+storyDifficultyText+".json")){
+					storyDifficultyText ="";
+				}
 			var realJson = parseJSONshit(File.getContent("assets/data/" + folder.toLowerCase() + "/" + jsonInput.toLowerCase() + '.json').trim());
 			parsedJson.notes = realJson.notes;
 			parsedJson.bpm = realJson.bpm;

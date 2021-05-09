@@ -109,7 +109,7 @@ class NewInputOption extends Option{
 	}
 	private override function updateDisplay():String
 		{
-			return FlxG.save.data.newInput ? "New Input" : "Improved 	Old Input";
+			return FlxG.save.data.newInput ? "New Input" : "Week 7ish Input";
 		}
 	
 		public override function press():Bool

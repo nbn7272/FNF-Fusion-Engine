@@ -27,7 +27,10 @@ import openfl.Assets;
 #if windows
 import Discord.DiscordClient;
 #end
+#if sys
+import sys.io.File;
 
+#end
 #if desktop
 import sys.thread.Thread;
 #end
@@ -242,7 +245,7 @@ class TitleState extends MusicBeatState
 
 	function getIntroTextShit():Array<Array<String>>
 	{
-		var fullText:String = "technically this is my first mod";
+		var fullText:String = File.getContent("assets/preload/data/introText.txt");
 
 		var firstArray:Array<String> = fullText.split('\n');
 		var swagGoodArray:Array<Array<String>> = [];

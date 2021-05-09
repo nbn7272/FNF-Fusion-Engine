@@ -18,6 +18,7 @@ import Discord.DiscordClient;
 #end
 #if sys
 import sys.io.File;
+import sys.FileSystem;
 #end
 using StringTools;
 typedef StorySongsJson = {
@@ -318,7 +319,7 @@ class StoryMenuState extends MusicBeatState
 
 	function selectWeek()
 	{
-		
+
 			trace("1");
 			if (stopspamming == false)
 			{
@@ -347,8 +348,8 @@ class StoryMenuState extends MusicBeatState
 			}
 
 			PlayState.storyDifficulty = curDifficulty;
-
-			PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + diffic, PlayState.storyPlaylist[0].toLowerCase());
+			trace(PlayState.storyPlaylist[0]);
+			PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() , PlayState.storyPlaylist[0].toLowerCase(),curDifficulty);
 			
 			trace("4");
 			PlayState.storyWeek = curWeek;

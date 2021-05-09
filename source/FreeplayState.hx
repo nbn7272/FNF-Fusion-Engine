@@ -12,6 +12,7 @@ import lime.utils.Assets;
 
 #if sys
 import sys.io.File;
+import sys.FileSystem;
 
 import flash.media.Sound;
 #end
@@ -219,11 +220,8 @@ class FreeplayState extends MusicBeatState
 
 		if (accepted)
 		{
-			var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
 
-			trace(poop);
-
-			PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
+			PlayState.SONG = Song.loadFromJson( songs[curSelected].songName.toLowerCase(), songs[curSelected].songName.toLowerCase(),curDifficulty);
 			PlayState.isStoryMode = false;
 			PlayState.storyDifficulty = curDifficulty;
 			PlayState.storyWeek = songs[curSelected].week;
