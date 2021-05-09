@@ -43,7 +43,8 @@ This game was made with love to Newgrounds and its community. Extra love to Tom 
 - [The contributors](https://github.com/KadeDev/Kade-Engine/graphs/contributors)
 ### Modding Plus
 - [BulbyVR](https://twitter.com/KadeDeveloper) - Programmer
-
+# Report Bugs
+Join the [Discord](https://discord.gg/qPfxxd4XWA) and ping @Lead Developer 
 # Other pages
  - [BUILDING.md](https://github.com/KadeDev/Kade-Engine/blob/master/BUILDING.md) - How to compile/build the game
  - [ModCharts.md](https://github.com/KadeDev/Kade-Engine/blob/master/ModCharts.md) - Mod Chart Documentation
