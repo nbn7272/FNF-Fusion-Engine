@@ -20,7 +20,7 @@ Links: **[itch.io page](https://ninja-muffin24.itch.io/funkin) ⋅ [Newgrounds](
 # Features
 
  - **Improved Input System Customization**
-	 - Adds week 7 like input as an option.
+	 - Adds "week 7 like"input  system  as an option (pressing a note when there is no note to hit will make you lose health and points).
  - **New Accuracy Mode**
 	 - Binary mode bases your accuracy on whether or not you hit the note, rather than the timing.
  - **Easily Port Modding Plus Mods to Fusion in 1 Minute**
