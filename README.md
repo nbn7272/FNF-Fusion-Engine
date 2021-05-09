@@ -24,8 +24,8 @@ Links: **[itch.io page](https://ninja-muffin24.itch.io/funkin) ⋅ [Newgrounds](
  - **New Accuracy Mode**
 	 - Binary mode bases your accuracy on whether or not you hit the note, rather than the timing.
  - **Easily Port Modding Plus Mods to Fusion in 1 Minute**
-	 - Check out this youtube video on how to do it
-#The following features have not been added from modding plus
+	 - Check out this youtube video on how to do it: https://youtu.be/ZrImGTt-UXA
+# The following features have not been added from modding plus
  - **Custom difficulty**
 	- The only difficulties are easy, normal, and hard
 # Credits
