@@ -20,12 +20,12 @@ Links: **[itch.io page](https://ninja-muffin24.itch.io/funkin) ⋅ [Newgrounds](
 # Features
 
  - **Improved Input System Customization**
-	 - Adds week 7 like input as an option.
+	 - Adds "week 7 like"input  system  as an option (pressing a note when there is no note to hit will make you lose health and points).
  - **New Accuracy Mode**
 	 - Binary mode bases your accuracy on whether or not you hit the note, rather than the timing.
  - **Easily Port Modding Plus Mods to Fusion in 1 Minute**
 	 - Check out this youtube video on how to do it: https://youtu.be/ZrImGTt-UXA
-# The following features have not been added from modding plus
+# The following features have not been added from Modding Plus
  - **Custom difficulty**
 	- The only difficulties are easy, normal, and hard
 # Credits
@@ -43,7 +43,8 @@ This game was made with love to Newgrounds and its community. Extra love to Tom 
 - [The contributors](https://github.com/KadeDev/Kade-Engine/graphs/contributors)
 ### Modding Plus
 - [BulbyVR](https://twitter.com/KadeDeveloper) - Programmer
-
+# Report Bugs
+Join the [Discord](https://discord.gg/qPfxxd4XWA) and ping @Lead Developer 
 # Other pages
  - [BUILDING.md](https://github.com/KadeDev/Kade-Engine/blob/master/BUILDING.md) - How to compile/build the game
  - [ModCharts.md](https://github.com/KadeDev/Kade-Engine/blob/master/ModCharts.md) - Mod Chart Documentation
