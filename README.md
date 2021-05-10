@@ -1,4 +1,4 @@
-# **Fusion Engine** is a modding engine that **combines the ease of modding with Modding Plus and the luxuries of Kade Engine**.
+# **Fusion Engine** is a modding engine that **combines the ease of modding with Modding Plus and the luxuries of Kade Engine. No need for compiling!**.
 
 ![Fusion Engine logo](https://raw.githubusercontent.com/kidsfreej/FNF-Fusion-Engine/master/art/fusion_engine.png)
 
