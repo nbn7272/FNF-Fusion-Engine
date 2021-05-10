@@ -1405,20 +1405,7 @@ class PlayState extends MusicBeatState
 			
 		var gfVersion:String = 'gf';
 
-		switch (curStage)
-		{
-			case 'limo':
-				gfVersion = 'gf-car';
-			case 'mall' | 'mallEvil':
-				gfVersion = 'gf-christmas';
-			case 'school':
-				gfVersion = 'gf-pixel';
-			case 'schoolEvil':
-				gfVersion = 'gf-pixel';
-		}
-
-		if (curStage == 'limo')
-			gfVersion = 'gf-car';
+		gfVersion = SONG.gf;
 
 		gf = new Character(400, 130, gfVersion);
 		gf.scrollFactor.set(0.95, 0.95);
@@ -4718,16 +4705,16 @@ class PlayState extends MusicBeatState
 			boyfriend.playAnim('idle');
 		}
 
-		if (curBeat % 8 == 7 && curSong == 'Bopeebo')
-		{
-			boyfriend.playAnim('hey', true);
-		}
-
-		if (curBeat % 16 == 15 && SONG.song == 'Tutorial' && dad.curCharacter == 'gf' && curBeat > 16 && curBeat < 48)
+		if (curBeat % 8 == 7 && SONG.isHey)
 			{
 				boyfriend.playAnim('hey', true);
-				dad.playAnim('cheer', true);
+	
+				if (SONG.song == 'Tutorial' && dad.like == 'gf')
+				{
+					dad.playAnim('cheer', true);
+				}
 			}
+	
 
 		switch (curStage)
 		{
