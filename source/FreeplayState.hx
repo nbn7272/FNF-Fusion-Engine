@@ -220,11 +220,38 @@ class FreeplayState extends MusicBeatState
 
 		if (accepted)
 		{
+			var diffic = "";
 
-			PlayState.SONG = Song.loadFromJson( songs[curSelected].songName.toLowerCase(), songs[curSelected].songName.toLowerCase(),curDifficulty);
+			switch (curDifficulty)
+			{
+				case 0:
+					diffic = '-easy';
+				case 2:
+					diffic = '-hard';
+			}
+			var poop:String = songs[curSelected].songName.toLowerCase() + diffic;
+			if (!FileSystem.exists('assets/data/' + songs[curSelected].songName.toLowerCase() + '/' + poop.toLowerCase() + '.json'))
+			{
+				// assume we pecked up the difficulty, return to default difficulty
+				trace("UH OH SONG IN SPECIFIED DIFFICULTY DOESN'T EXIST\nUSING DEFAULT DIFFICULTY");
+				poop = songs[curSelected].songName;
+				curDifficulty = 1;
+			}
+			 diffic = "";
+
+			switch (curDifficulty)
+			{
+				case 0:
+					diffic = '-easy';
+				case 2:
+					diffic = '-hard';
+			}
+
+
+			PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
 			PlayState.isStoryMode = false;
 			PlayState.storyDifficulty = curDifficulty;
-			PlayState.storyWeek = songs[curSelected].week;
+			
 			trace('CUR WEEK' + PlayState.storyWeek);
 			LoadingState.loadAndSwitchState(new PlayState());
 		}

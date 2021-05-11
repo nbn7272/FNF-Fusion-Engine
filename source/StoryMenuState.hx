@@ -337,8 +337,10 @@ class StoryMenuState extends MusicBeatState
 			selectedWeek = true;
 			
 			trace("3");
+
 			var diffic = "";
 
+			diffic = "";
 			switch (curDifficulty)
 			{
 				case 0:
@@ -348,10 +350,18 @@ class StoryMenuState extends MusicBeatState
 			}
 
 			PlayState.storyDifficulty = curDifficulty;
-			trace(PlayState.storyPlaylist[0]);
-			PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() , PlayState.storyPlaylist[0].toLowerCase(),curDifficulty);
+			for (peckUpAblePath in PlayState.storyPlaylist) {
+				if (!FileSystem.exists('assets/data/'+peckUpAblePath.toLowerCase()+'/'+peckUpAblePath.toLowerCase() + diffic+'.json')) {
+					// probably messed up difficulty
+					trace("UH OH DIFFICULTY DOESN'T EXIST FOR A SONG");
+					trace("CHANGING TO DEFAULT DIFFICULTY");
+					diffic = "";
+					PlayState.storyDifficulty =1;
+				}
+			}
+			PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + diffic, PlayState.storyPlaylist[0].toLowerCase());
 			
-			trace("4");
+
 			PlayState.storyWeek = curWeek;
 			PlayState.campaignScore = 0;
 			new FlxTimer().start(1, function(tmr:FlxTimer)

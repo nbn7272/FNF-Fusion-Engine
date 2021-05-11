@@ -1,45 +1,48 @@
 package;
 
-import flixel.FlxG;
 import flixel.FlxSprite;
-import lime.utils.Assets;
-import lime.app.Application;
-import flash.display.BitmapData;
 import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
+import flash.display.BitmapData;
+import lime.utils.Assets;
+import lime.system.System;
+import lime.app.Application;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
 import haxe.io.Path;
+import openfl.utils.ByteArray;
 #end
+import haxe.Json;
+import tjson.TJSON;
+import haxe.format.JsonParser;
 using StringTools;
 
 class Character extends FlxSprite
 {
-	public var isDie:Bool = false;
-	public var isPixel:Bool = false;
+	public var animOffsets:Map<String, Array<Dynamic>>;
+	public var debugMode:Bool = false;
+
+	public var isPlayer:Bool = false;
+	public var curCharacter:String = 'bf';
 	public var enemyOffsetX:Int = 0;
 	public var enemyOffsetY:Int = 0;
 	public var camOffsetX:Int = 0;
 	public var camOffsetY:Int = 0;
 	public var followCamX:Int = 0;
 	public var followCamY:Int = 0;
-	public var isCustom:Bool = false;
 	public var midpointX:Int = 0;
 	public var midpointY:Int = 0;
-	public var animOffsets:Map<String, Array<Dynamic>>;
-	public var debugMode:Bool = false;
-	public var like:String = "bf";
-	public var isPlayer:Bool = false;
-	public var curCharacter:String = 'bf';
-
+	public var isCustom:Bool = false;
 	public var holdTimer:Float = 0;
-
+	public var like:String = "bf";
+	public var isDie:Bool = false;
+	public var isPixel:Bool = false;
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
 	{
+		animOffsets = new Map<String, Array<Dynamic>>();
 		super(x, y);
 
-		animOffsets = new Map<String, Array<Dynamic>>();
 		curCharacter = character;
 		this.isPlayer = isPlayer;
 
@@ -48,7 +51,6 @@ class Character extends FlxSprite
 
 		switch (curCharacter)
 		{
-
 			case 'gf':
 				// GIRLFRIEND CODE
 				tex = FlxAtlasFrames.fromSparrow('assets/images/GF_assets.png', 'assets/images/GF_assets.xml');
@@ -427,7 +429,7 @@ class Character extends FlxSprite
 				animation.addByPrefix('firstDeath', "BF Dies pixel", 24, false);
 				animation.addByPrefix('deathLoop', "Retry Loop", 24, true);
 				animation.addByPrefix('deathConfirm', "RETRY CONFIRM", 24, false);
-				animation.play('firstDeath');	
+				animation.play('firstDeath');
 
 				addOffset('firstDeath');
 				addOffset('deathLoop', -37);
@@ -543,7 +545,7 @@ class Character extends FlxSprite
 				var charJson:Dynamic = null;
 				var isError:Bool = false;
 				try {
-					charJson = CoolUtil.parseJson(File.getContent('assets/images/custom_chars/custom_chars.jsonc'));
+					charJson = CoolUtil.parseJson(Assets.getText('assets/images/custom_chars/custom_chars.jsonc'));
 				} catch (exception) {
 					// uh oh someone messed up their json
 					Application.current.window.alert("Hey! You messed up your custom_chars.jsonc. Your game won't crash but it will load bf. "+exception, "Alert");
@@ -715,14 +717,15 @@ class Character extends FlxSprite
 				#end
 		}
 
+
+
 		dance();
 
 		if (isPlayer)
 		{
 			flipX = !flipX;
-
 			// Doesn't flip for BF, since his are already in the right place???
-			if (!curCharacter.startsWith('bf'))
+			if (like != "bf" && like != "bf-pixel")
 			{
 				// var animArray
 				var oldRight = animation.getByName('singRIGHT').frames;
@@ -742,7 +745,13 @@ class Character extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-		if (!curCharacter.startsWith('bf'))
+
+		//curCharacter = curCharacter.trim();
+		//var charJson:Dynamic = Json.parse(Assets.getText('assets/images/custom_chars/custom_chars.json'));
+		//var animJson = File.getContent("assets/images/custom_chars/"+Reflect.field(charJson,curCharacter).like+".json");
+
+		//if (!StringTools.contains(animJson, "firstDeath") && like != "bf-pixel") //supposed to fix note anim shit for bfs with unique jsons, currently broken
+		if (like != "bf" && like != "bf-pixel")
 		{
 			if (animation.curAnim.name.startsWith('sing'))
 			{
@@ -777,6 +786,7 @@ class Character extends FlxSprite
 	 */
 	public function dance()
 	{
+		trace('boogie');
 		if (!debugMode)
 		{
 			switch (curCharacter)
@@ -824,38 +834,53 @@ class Character extends FlxSprite
 							playAnim('danceLeft');
 					}
 
-					default:
-						if (like == "gf" || like == "spooky" || like == "gf-pixel" || like == "gf-car") {
-							if (!animation.curAnim.name.startsWith('hair'))
-							{
-								danced = !danced;
-								trace(danced);
-								if (danced)
-									playAnim('danceRight');
-								else
-									playAnim('danceLeft');
-							}
-						} else {
-						
-							playAnim('idle');
+				case 'spooky':
+					danced = !danced;
+
+					if (danced)
+						playAnim('danceRight');
+					else
+						playAnim('danceLeft');
+				default:
+					if (like == "gf" || like == "spooky" || like == "gf-pixel" || like == "gf-car") {
+						if (!animation.curAnim.name.startsWith('hair'))
+						{
+							danced = !danced;
+							trace(danced);
+							if (danced)
+								playAnim('danceRight');
+							else
+								playAnim('danceLeft');
 						}
+					} else {
+						playAnim('idle');
+					}
 			}
 		}
 	}
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
+		trace(AnimName);
 		animation.play(AnimName, Force, Reversed, Frame);
-
-		var daOffset = animOffsets.get(AnimName);
-		if (animOffsets.exists(AnimName))
+		var animName = "";
+		if (animation.curAnim == null) {
+			// P A N I K
+			animName = "idle";
+			trace("OH SHIT OH FUCK");
+		} else {
+			// kalm
+			animName = animation.curAnim.name;
+		}
+		var daOffset = animOffsets.get(animName);
+		if (animOffsets.exists(animName))
 		{
 			offset.set(daOffset[0], daOffset[1]);
 		}
 		else
 			offset.set(0, 0);
-
-		if (curCharacter == 'gf')
+		// should spooky be on this?
+		if (like == 'gf'  || like == 'gf-pixel')
 		{
 			if (AnimName == 'singLEFT')
 			{
@@ -878,7 +903,7 @@ class Character extends FlxSprite
 		animOffsets[name] = [x, y];
 	}
 	public static function getAnimJson(char:String) {
-		var charJson = CoolUtil.parseJson(File.getContent('assets/images/custom_chars/custom_chars.jsonc'));
+		var charJson = CoolUtil.parseJson(Assets.getText('assets/images/custom_chars/custom_chars.jsonc'));
 		var animJson = CoolUtil.parseJson(File.getContent('assets/images/custom_chars/'+Reflect.field(charJson,char).like + '.json'));
 		return animJson;
 	}
