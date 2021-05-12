@@ -42,7 +42,7 @@ This game was made with love to Newgrounds and its community. Extra love to Tom 
 - [KadeDeveloper](https://twitter.com/KadeDeveloper) - Maintainer and lead programmer
 - [The contributors](https://github.com/KadeDev/Kade-Engine/graphs/contributors)
 ### Modding Plus
-- [BulbyVR](https://twitter.com/KadeDeveloper) - Programmer
+- [BulbyVR](https://github.com/TheDrawingCoder-Gamer/) - Programmer
 # Report Bugs
 Join the [Discord](https://discord.gg/qPfxxd4XWA) and ping @Lead Developer 
 # Other pages
