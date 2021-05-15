@@ -398,12 +398,12 @@ class TitleState extends MusicBeatState
 			// credTextShit.screenCenter();
 			case 5:
 				if (Main.watermarks)
-					createCoolText(['Kade Engine', 'by']);
+					createCoolText(['Fusion Engine', 'by']);
 				else
 					createCoolText(['In Partnership', 'with']);
 			case 7:
 				if (Main.watermarks)
-					addMoreText('KadeDeveloper');
+					addMoreText('Kidsfreej on Github');
 				else
 				{
 					addMoreText('Newgrounds');

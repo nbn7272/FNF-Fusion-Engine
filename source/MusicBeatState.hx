@@ -55,10 +55,9 @@ class MusicBeatState extends FlxUIState
 
 		updateCurStep();
 		updateBeat();
-
-		if (oldStep != curStep && curStep > 0)
+		if (oldStep != curStep && curStep > 0){
 			stepHit();
-
+		}
 		if (FlxG.save.data.fpsRain && skippedFrames >= 6)
 			{
 				if (currentColor >= array.length)
@@ -102,9 +101,10 @@ class MusicBeatState extends FlxUIState
 
 	public function stepHit():Void
 	{
-
-		if (curStep % 4 == 0)
+		
+		if (curStep % 4 == 0){
 			beatHit();
+		}
 	}
 
 	public function beatHit():Void

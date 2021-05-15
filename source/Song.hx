@@ -73,7 +73,6 @@ class Song
 				rawJson = Assets.getText('assets/data/' + folder.toLowerCase() + '/' + jsonInput.toLowerCase() + '.json').trim();
 				#end
 			}
-			trace(rawJson);
 			while (!rawJson.endsWith("}"))
 			{
 				rawJson = rawJson.substr(0, rawJson.length - 1);
@@ -104,7 +103,6 @@ class Song
 				if (parsedJson.song.toLowerCase() == 'bopeebo')
 					parsedJson.isHey = true;
 			}
-			trace(parsedJson.stage);
 			if (parsedJson.gf == null) {
 				// are you kidding me did i really do song to lowercase
 				switch (parsedJson.stage) {

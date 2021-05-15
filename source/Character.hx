@@ -535,13 +535,11 @@ class Character extends FlxSprite
 				// assume it is a custom character. if not: oh well
 				// protective ritual to protect against new lines
 				curCharacter = curCharacter.trim();
-				trace(curCharacter);
 				isCustom = true;
 				if (StringTools.endsWith(curCharacter, "-dead")) {
 					isDie = true;
 					curCharacter = curCharacter.substr(0, curCharacter.length - 5);
 				}
-				trace(curCharacter);
 				var charJson:Dynamic = null;
 				var isError:Bool = false;
 				try {
@@ -786,7 +784,6 @@ class Character extends FlxSprite
 	 */
 	public function dance()
 	{
-		trace('boogie');
 		if (!debugMode)
 		{
 			switch (curCharacter)
@@ -846,7 +843,6 @@ class Character extends FlxSprite
 						if (!animation.curAnim.name.startsWith('hair'))
 						{
 							danced = !danced;
-							trace(danced);
 							if (danced)
 								playAnim('danceRight');
 							else
@@ -861,7 +857,6 @@ class Character extends FlxSprite
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
-		trace(AnimName);
 		animation.play(AnimName, Force, Reversed, Frame);
 		var animName = "";
 		if (animation.curAnim == null) {
