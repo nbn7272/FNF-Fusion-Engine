@@ -4,7 +4,7 @@
 
 
 https://discord.gg/qPfxxd4XWA
-
+# If you make a mod, please credit me on the gamebanana or github page!!
 # Friday Night Funkin': Fusion Engine Beta
 
 ## Fusion Engine
