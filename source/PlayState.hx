@@ -73,6 +73,7 @@ using StringTools;
 class PlayState extends MusicBeatState
 {
 	public var hasCreated:Bool = false;
+	public var hasCreatedgf:Bool = false;
 	public static var curStage:String = '';
 	public static var SONG:SwagSong;
 	public static var isStoryMode:Bool = false;
@@ -518,6 +519,7 @@ class PlayState extends MusicBeatState
 		boyfriend = new Boyfriend(770, 450, SONG.player1);
 		dad = new Character(100, 100, SONG.player2);
 		gf = new Character(400, 130, SONG.gf);
+
 	 if (SONG.stage == 'spooky')
 			{
 				curStage = "spooky";
@@ -1409,119 +1411,13 @@ class PlayState extends MusicBeatState
 						bg.scale.set(6, 6);
 						add(bg);
 					default:
-
-						
-						var fl:String = "assets/images/custom_stages/"+SONG.stage+"/stageData.json";
-						var allStageData:Dynamic= CoolUtil.parseJson(CoolUtil.getContent("assets/images/custom_stages/"+SONG.stage+"/stageData.json"));	
-						var stageData:Dynamic= CoolUtil.getDynamic(allStageData,"assets",fl,false);
-						defaultCamZoom = CoolUtil.getFloat(allStageData,"cameraZoom",fl,1);
-						var offsetData:Dynamic=  CoolUtil.getDynamic(allStageData,"offsets",fl,true);
-						hasCreated = false;
-						var bgEscalator:FlxSprite = new FlxSprite(-1100, -600).loadGraphic('assets/images/christmas/bgEscalator.png');
-						bgEscalator.antialiasing = true;
-						bgEscalator.scrollFactor.set(0.3, 0.3);
-						bgEscalator.active = false;
-						bgEscalator.setGraphicSize(Std.int(bgEscalator.width * 0.9));
-						bgEscalator.updateHitbox();
-						add(bgEscalator);
-						if(stageData!=null){
-							for(i in 0...stageData.length){
-								var inst:Dynamic = stageData[i];
-								var isInFront = CoolUtil.getBool(inst,"isInFrontOfPlayer",fl,false);
-								var bAnim = CoolUtil.getString(inst,'beatAnimation',fl,"");
-								var idleAnim = CoolUtil.getString(inst,'idleAnimation',fl,"");	
-								if(isInFront && !hasCreated){
-									add(gf);
-									add(dad);
-									add(boyfriend);
-									hasCreated = true;
-								}
-
-								if(!inst.animated){
-									
-									var newInst:BitmapData;
-									// if (FileSystem.exists('assets/images/custom_stages/'+SONG.stage+"/"+inst.name+".png")) {
-										newInst = CoolUtil.getBitmap('assets/images/custom_stages/'+SONG.stage+"/"+inst.name+".png");
-									// }
-									var bg:FlxSprite = new FlxSprite(CoolUtil.getInt(inst,'x',fl), CoolUtil.getInt(inst,'y',fl)).loadGraphic(newInst);
-									bg.antialiasing = true;
-									bg.scrollFactor.set(CoolUtil.getFloat(inst,'scrollFactorX',fl,1), CoolUtil.getFloat(inst,'scrollFactorY',fl,1));
-									bg.active = false;
-									bg.setGraphicSize(Std.int(bg.width * CoolUtil.getFloat(inst,"size",fl,1)));
-									add(bg);
-								}else{
-
-									var boppers = new StageAsset(CoolUtil.getInt(inst,'x',fl), CoolUtil.getInt(inst,'y',fl),bAnim,idleAnim,0,CoolUtil.getFloat(inst,'beatAnimationSize',fl,1),CoolUtil.getFloat(inst,'idleAnimationSize',fl,1));
-									boppers.originalSize = boppers.width;
-									var rawPic = CoolUtil.getBitmap("assets/images/custom_stages/"+SONG.stage+"/"+inst.name+".png");
-									var rawXml = CoolUtil.getContent("assets/images/custom_stages/"+SONG.stage+"/"+inst.name+".xml");
-									boppers.setGraphicSize(Std.int(boppers.width * CoolUtil.getFloat(inst,'size',fl,1)));
-									boppers.frames = FlxAtlasFrames.fromSparrow(rawPic,rawXml);
-								
-									if(inst.beatAnimation!=""){
-										var bFreq =  CoolUtil.getFloat(inst,'beatAnimationFrequency',fl,4);
-										boppers.beatFrequency = bFreq;
-										boppers.setGraphicSize(Std.int(boppers.width * CoolUtil.getFloat(inst,'beatAnimationSize',fl,1)));
-										var bFramerate = CoolUtil.getInt(inst,'beatAnimationFramerate',fl,24);
-										boppers.animation.addByPrefix('bop', bAnim, bFramerate, false);
-									}
-									if(inst.idleAnimation!=""){
-										var iFramerate = CoolUtil.getInt(inst,'idleAnimationFramerate',fl,4);
-										boppers.setGraphicSize(Std.int(boppers.width * CoolUtil.getFloat(inst,'idleAnimationSize',fl,1)));
-										boppers.animation.addByPrefix('idle', idleAnim, iFramerate, false);
-									}
-									boppers.antialiasing = true;
-									boppers.scrollFactor.set(CoolUtil.getFloat(inst,'scrollFactorX',fl,1), CoolUtil.getFloat(inst,'scrollFactorY',fl,1));
-									boppers.setGraphicSize(Std.int(boppers.width * CoolUtil.getFloat(inst,"size",fl,1)));
-									boppers.updateHitbox();
-									add(boppers);
-									stageAssets.push(boppers);
-									
-
-
-								}
-
-							}
-						}
-						if(!hasCreated){
-							add(gf);
-							add(dad);
-							add(boyfriend);
-							hasCreated = true;
-						}
-						if(offsetData!=null){
-							for(i in 0...offsetData.length){
-								var inst:Dynamic = offsetData[i];
-								var offx:Int =  CoolUtil.getInt(inst,'x',fl,0);
-								var offy:Int = CoolUtil.getInt(inst,'y',fl,0);
-								trace(CoolUtil.getString(inst,'name',fl));
-								switch(CoolUtil.getString(inst,'name',fl)){
-									case 'bf':
-										boyfriend.x +=offx;
-										boyfriend.y += offy;
-									case 'dad':
-										dad.x += offx;
-										dad.y +=offy;
-									case 'gf':
-										gf.x += offx;
-										gf.y += offy;
-									case 'dadCamera':
-										dadCameraOffsetX = offx;
-										dadCameraOffsetY = offy;
-									case 'bfCamera':
-										bfCameraOffsetX = offx;
-										bfCameraOffsetY = offy;
-								}
-							}
-						}	
+						generateFusionStage();
 				}
 
 			}
-		if(!hasCreated){
+		if (curStage == 'limo'){
 			add(gf);
-			add(dad);
-			add(boyfriend);
-			hasCreated = true;
+			add(limo);
 		}
 
 		var gfVersion:String = 'gf';
@@ -1595,6 +1491,7 @@ class PlayState extends MusicBeatState
 		switch (curStage)
 		{
 			case 'limo':
+				
 				boyfriend.y -= 220;
 				boyfriend.x += 260;
 
@@ -1629,8 +1526,14 @@ class PlayState extends MusicBeatState
 
 
 		// Shitty layering but whatev it works LOL
-		if (curStage == 'limo')
-			add(limo);
+		if(!hasCreatedgf  && curStage!='limo'){
+			add(gf);
+		}
+		if(!hasCreated){
+			add(dad);
+			add(boyfriend);
+			hasCreated = true;
+		}
 
 
 		var doof:DialogueBox = new DialogueBox(false, dialogue);
@@ -4633,7 +4536,142 @@ class PlayState extends MusicBeatState
 		
 
 	var fastCarCanDrive:Bool = true;
+	function generateFusionStage(){
+	
+		curStage = "";
+	
+		var fl:String = "assets/images/custom_stages/"+SONG.stage+"/stageData.json";
+		var allStageData:Dynamic= CoolUtil.parseJson(CoolUtil.getContent("assets/images/custom_stages/"+SONG.stage+"/stageData.json"));	
+		var stageData:Dynamic= CoolUtil.getDynamic(allStageData,"assets",fl,false);
+		defaultCamZoom = CoolUtil.getFloat(allStageData,"cameraZoom",fl,1);
+		var offsetData:Dynamic=  CoolUtil.getDynamic(allStageData,"offsets",fl,false);
+		hasCreated = false;
+		hasCreatedgf = false;
+		if(stageData!=null){
+			for(i in 0...stageData.length){
+				var inst:Dynamic = stageData[i];
+				var isInFront = CoolUtil.getBool(inst,"isInFrontOfPlayers",fl,false);
+				var isInFrontgf = CoolUtil.getBool(inst,"isInFrontOfGf",fl,false);
+				if(isInFront && !hasCreated){
+					if(!hasCreatedgf){
+						add(gf);
+						hasCreatedgf = true;
+					}
+					add(dad);
+					add(boyfriend);
+					hasCreated = true;
+				}
+				if(isInFrontgf && !hasCreatedgf){
+					add(gf);
+					hasCreatedgf = true;
+				}
+				if(!inst.animated){
+					
+					var newInst:BitmapData;
+					// if (FileSystem.exists('assets/images/custom_stages/'+SONG.stage+"/"+inst.name+".png")) {
+						newInst = CoolUtil.getBitmap('assets/images/custom_stages/'+SONG.stage+"/"+ CoolUtil.getString(inst,'name',fl)+".png");
+					// }
+					var bg:FlxSprite = new FlxSprite(CoolUtil.getInt(inst,'x',fl), CoolUtil.getInt(inst,'y',fl)).loadGraphic(newInst);
+					bg.antialiasing = true;
+					bg.scrollFactor.set(CoolUtil.getFloat(inst,'scrollFactorX',fl,1), CoolUtil.getFloat(inst,'scrollFactorY',fl,1));
+					bg.active = false;
+					bg.setGraphicSize(Std.int(bg.width * CoolUtil.getFloat(inst,"size",fl,1)));
+					bg.updateHitbox();
+					add(bg);
+				}else{
+					var bAnim = CoolUtil.getString(inst,'beatAnimation',fl,"");
+					var idleAnim = CoolUtil.getString(inst,'idleAnimation',fl,"");	
+					var istxt = CoolUtil.getBool(inst,"istxt",fl,false);
+					var boppers = new StageAsset(CoolUtil.getInt(inst,'x',fl), CoolUtil.getInt(inst,'y',fl),bAnim,idleAnim,0,CoolUtil.getFloat(inst,'beatAnimationSize',fl,1),CoolUtil.getFloat(inst,'idleAnimationSize',fl,1));
+					boppers.originalSize = boppers.width;
+					var name =  CoolUtil.getString(inst,"name",fl);
+					var rawPic = CoolUtil.getBitmap("assets/images/custom_stages/"+SONG.stage+"/"+name+".png");
+					var rawXml = "";
+					boppers.hasIdleAnimation = CoolUtil.getBool(inst,"hasIdleAnimation",fl,false) ;
+					boppers.hasBeatAnimation = CoolUtil.getBool(inst,"hasBeatAnimation",fl,false) ;
+					if(!istxt){
+						rawXml = CoolUtil.getContent("assets/images/custom_stages/"+SONG.stage+"/"+name+".xml");
+						boppers.frames = FlxAtlasFrames.fromSparrow(rawPic,rawXml);
 
+					}else{
+						trace("getting raw");
+						rawXml = CoolUtil.getContent("assets/images/custom_stages/"+SONG.stage+"/"+name+".txt");
+						boppers.frames = FlxAtlasFrames.fromSpriteSheetPacker(rawPic,rawXml);
+					}
+					boppers.setGraphicSize(Std.int(boppers.width * CoolUtil.getFloat(inst,'size',fl,1)));
+					boppers.beatAnimationOffset = CoolUtil.getInt(inst,'beatAnimationOffset',fl,0);
+				
+					if(boppers.beatAnimation!="" ||boppers.hasBeatAnimation){
+						var bFreq =  CoolUtil.getFloat(inst,'beatAnimationFrequency',fl,4);
+						boppers.beatFrequency = bFreq;
+						boppers.setGraphicSize(Std.int(boppers.width * CoolUtil.getFloat(inst,'beatAnimationSize',fl,1)));
+						var bFramerate = CoolUtil.getInt(inst,'beatAnimationFramerate',fl,24);
+
+						if(!istxt){
+							boppers.animation.addByPrefix('bop', bAnim, bFramerate, false);
+						}else{	
+							var txtorder =  CoolUtil.getDynamic(inst,"txtBeatOrder",fl,true);
+							boppers.animation.add('bop', txtorder, bFramerate);
+						}
+					}
+					if(boppers.idleAnimation!="" ||boppers.hasIdleAnimation){
+						var iFramerate = CoolUtil.getInt(inst,'idleAnimationFramerate',fl,4);
+						boppers.setGraphicSize(Std.int(boppers.width * CoolUtil.getFloat(inst,'idleAnimationSize',fl,1)));
+						if(!istxt){
+							boppers.animation.addByPrefix('bop', idleAnim, iFramerate, false);
+						}else{
+							var txtorder =  CoolUtil.getDynamic(inst,"txtIdleOrder",fl,true);
+							trace("loading raw");
+							trace(txtorder);
+							boppers.animation.add('idle', txtorder, iFramerate);
+						}
+					}
+					boppers.antialiasing = true;
+					boppers.scrollFactor.set(CoolUtil.getFloat(inst,'scrollFactorX',fl,1), CoolUtil.getFloat(inst,'scrollFactorY',fl,1));
+					boppers.setGraphicSize(Std.int(boppers.width * CoolUtil.getFloat(inst,"size",fl,1)));
+					boppers.updateHitbox();
+					add(boppers);
+					stageAssets.push(boppers);
+					
+	
+	
+				}
+	
+			}
+		}
+		if(!hasCreated){
+			add(gf);
+			add(dad);
+			add(boyfriend);
+			hasCreated = true;
+		}
+		if(offsetData!=null){
+			for(i in 0...offsetData.length){
+				var inst:Dynamic = offsetData[i];
+				var offx:Int =  CoolUtil.getInt(inst,'x',fl,0);
+				var offy:Int = CoolUtil.getInt(inst,'y',fl,0);
+				trace(CoolUtil.getString(inst,'name',fl));
+				switch(CoolUtil.getString(inst,'name',fl)){
+					case 'bf':
+						boyfriend.x +=offx;
+						boyfriend.y += offy;
+					case 'dad':
+						dad.x += offx;
+						dad.y +=offy;
+					case 'gf':
+						gf.x += offx;
+						gf.y += offy;
+					case 'dadCamera':
+						dadCameraOffsetX = offx;
+						dadCameraOffsetY = offy;
+					case 'bfCamera':
+						bfCameraOffsetX = offx;
+						bfCameraOffsetY = offy;
+				}
+			}
+		}
+	
+	}			
 	function resetFastCar():Void
 	{
 		fastCar.x = -12600;
@@ -4723,19 +4761,17 @@ class PlayState extends MusicBeatState
 	override function stepHit()
 	{
 		super.stepHit();
-		trace("sep hit here");
-		trace(stageAssets.length);
 		for(i in 0...stageAssets.length){
 			var asset = stageAssets[i];
-			if(asset.beatAnimation!="" && curStep%asset.beatFrequency == 0){
+			if((asset.beatAnimation!=""||asset.hasBeatAnimation) && (curStep%asset.beatFrequency) == asset.beatAnimationOffset){
 				asset.setGraphicSize(Std.int(asset.originalSize * asset.beatAnimationSize));
 				asset.animation.play('bop', true);
-			}else if(asset.idleAnimation!="" && asset.animation.curAnim==null){
+			}else if((asset.idleAnimation!="" || asset.hasIdleAnimation) && asset.animation.curAnim==null){
 				asset.setGraphicSize(Std.int(asset.originalSize * asset.idleAnimationSize));
+				
 				asset.animation.play('idle', true);
 			}
 		}
-		trace("its proably not here");
 		if (FlxG.sound.music.time > Conductor.songPosition + 20 || FlxG.sound.music.time < Conductor.songPosition - 20)
 		{
 			resyncVocals();
@@ -4848,9 +4884,11 @@ class PlayState extends MusicBeatState
 				bgGirls.dance();
 
 			case 'mall':
+				trace("QWEQWEQWEQW");
 				upperBoppers.animation.play('bop', true);
 				bottomBoppers.animation.play('bop', true);
 				santa.animation.play('idle', true);
+				trace("spongus amongus");
 
 			case 'limo':
 				grpLimoDancers.forEach(function(dancer:BackgroundDancer)
@@ -4892,13 +4930,17 @@ class PlayState extends MusicBeatState
 
 	var curLight:Int = 0;
 }
+ 
 class StageAsset extends FlxSprite{
 	public var beatAnimation:String;
 	public var idleAnimation:String;
 	public var beatFrequency:Float;
 	public var beatAnimationSize:Float;
+	public var beatAnimationOffset:Int;
 	public var idleAnimationSize:Float;
 	public var originalSize:Float;
+	public var hasIdleAnimation:Bool;
+	public var hasBeatAnimation:Bool;
 	public function new(x,y,beatAnimations:String,idleAnimations:String,beatFrequencys:Float,beatAnimationSizes:Float,idleAnimationSizes:Float)
 	{
 		super(x, y);

@@ -61,7 +61,6 @@ class CoolUtil
 		return 0;
 	}	public static function getBool(dyn:Dynamic,key:String,jsonName:String,?d:Bool):Bool{
 		if(Reflect.hasField(dyn,key)){
-			trace("qwepqwepqwepqwep");
 			return Reflect.field(dyn,key);
 		}
 		if(d!=null){

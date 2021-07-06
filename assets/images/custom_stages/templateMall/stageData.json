@@ -63,6 +63,8 @@
                 "x":-300,
                 "y":140,
                 "scrollFactorX":0.9,
+                "beatAnimationFramerate":24,
+                "beatAnimationFrequency":4,
                 "scrollFactorY":0.9,
                 "beatAnimation":"Bottom Level Boppers"
             },
