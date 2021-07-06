@@ -20,7 +20,7 @@
             "scrollFactorY":0.9
         },
         {
-            "name":"stagecurtains",
+            "name":"stagecurtain",
             "animated":false,
             "playerLayer":2,
             "x":-500,
