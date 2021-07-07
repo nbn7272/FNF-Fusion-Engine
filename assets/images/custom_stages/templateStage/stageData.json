@@ -3,7 +3,6 @@
         {
             "name":"stageback",
             "animated":false,
-            "playerLayer":0,
             "x":-600,
             "y":-200,
             "scrollFactorX":0.9,
@@ -13,7 +12,6 @@
         {
             "name":"stagefront",
             "animated":false,
-            "playerLayer":0,
             "x":-650,
             "y":600,
             "scrollFactorX":0.9,
@@ -22,7 +20,7 @@
         {
             "name":"stagecurtains",
             "animated":false,
-            "playerLayer":2,
+            "isInFrontOfPlayers":true,
             "x":-500,
             "y":-300,
             "scrollFactorX":1.3,

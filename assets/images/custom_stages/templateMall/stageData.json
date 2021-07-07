@@ -17,7 +17,6 @@
             {
                 "name":"bgWalls",
                 "animated":false,
-                "playerLayer":0,
                 "x":-1000,
                 "y":-500,
                 "scrollFactorX":0.2,
