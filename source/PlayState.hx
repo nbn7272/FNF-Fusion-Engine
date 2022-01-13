@@ -129,8 +129,8 @@ class PlayState extends MusicBeatState
 
 	private static var prevCamFollow:FlxObject;
 
-	private var strumLineNotes:FlxTypedGroup<FlxSprite>;
-	private var playerStrums:FlxTypedGroup<FlxSprite>;
+	private var strumLineNotes:FlxTypedGroup<ShittyFuckinDumbPsychEngineThing>;
+	private var playerStrums:FlxTypedGroup<ShittyFuckinDumbPsychEngineThing>;
 
 	private var camZooming:Bool = false;
 	private var curSong:String = "";
@@ -1555,10 +1555,10 @@ class PlayState extends MusicBeatState
 		if (FlxG.save.data.downscroll)
 			strumLine.y = FlxG.height - 165;
 
-		strumLineNotes = new FlxTypedGroup<FlxSprite>();
+		strumLineNotes = new FlxTypedGroup<ShittyFuckinDumbPsychEngineThing>();
 		add(strumLineNotes);
 
-		playerStrums = new FlxTypedGroup<FlxSprite>();
+		playerStrums = new FlxTypedGroup<ShittyFuckinDumbPsychEngineThing>();
 
 		// startCountdown();
 
@@ -2467,7 +2467,7 @@ class PlayState extends MusicBeatState
 		for (i in 0...keyAmmo[mania])
 		{
 			// FlxG.log.add(i);
-			var babyArrow:FlxSprite = new FlxSprite(0, strumLine.y);
+			var babyArrow:ShittyFuckinDumbPsychEngineThing = new ShittyFuckinDumbPsychEngineThing(0, strumLine.y, i);
 
 			switch (SONG.uiType)
 			{
@@ -4326,45 +4326,47 @@ class PlayState extends MusicBeatState
 				}
 			}
 	
-				playerStrums.forEach(function(spr:FlxSprite)
+				playerStrums.forEach(function(spr:ShittyFuckinDumbPsychEngineThing)
 				{
 					if (mania == 0)
 				{
 					switch (spr.ID)
 					{
 						case 2:
-							if (upP && spr.animation.curAnim.name != 'confirm')
+							if (upP 
+								&& spr.animation.curAnim.name != 'confirm') //cool code lmao
 							{
-								spr.animation.play('pressed');
+								spr.animation.play
+					('pressed');
 								trace('play');
 							}
-							if (upR)
-							{
-								spr.animation.play('static');
+						if (upR)
+									{
+											spr.playAnim('static');
 								repReleases++;
-							}
+		}
 						case 3:
-							if (rightP && spr.animation.curAnim.name != 'confirm')
-								spr.animation.play('pressed');
-							if (rightR)
+							if 		(		rightP && spr.animation.curAnim.name != 'confirm')
+										spr.playAnim('pressed');
+																if (rightR)
 							{
-								spr.animation.play('static');
-								repReleases++;
-							}
+								spr.playAnim('static');
+											repReleases++;
+			}
 						case 1:
 							if (downP && spr.animation.curAnim.name != 'confirm')
-								spr.animation.play('pressed');
+								spr.playAnim('pressed');
 							if (downR)
 							{
-								spr.animation.play('static');
+								spr.playAnim('static');
 								repReleases++;
 							}
 						case 0:
 							if (leftP && spr.animation.curAnim.name != 'confirm')
-								spr.animation.play('pressed');
+								spr.playAnim('pressed');
 							if (leftR)
 							{
-								spr.animation.play('static');
+								spr.playAnim('static');
 								repReleases++;
 							}
 					}
@@ -4376,52 +4378,52 @@ class PlayState extends MusicBeatState
 						case 0:
 							if (l1P && spr.animation.curAnim.name != 'confirm')
 							{
-								spr.animation.play('pressed');
+								spr.playAnim('pressed');
 								trace('play');
 							}
 							if (l1R)
 							{
-								spr.animation.play('static');
+								spr.playAnim('static');
 								repReleases++;
 							}
 						case 1:
 							if (uP && spr.animation.curAnim.name != 'confirm')
-								spr.animation.play('pressed');
+								spr.playAnim('pressed');
 							if (uR)
 							{
-								spr.animation.play('static');
+								spr.playAnim('static');
 								repReleases++;
 							}
 						case 2:
 							if (r1P && spr.animation.curAnim.name != 'confirm')
-								spr.animation.play('pressed');
+								spr.playAnim('pressed');
 							if (r1R)
 							{
-								spr.animation.play('static');
+								spr.playAnim('static');
 								repReleases++;
 							}
 						case 3:
 							if (l2P && spr.animation.curAnim.name != 'confirm')
-								spr.animation.play('pressed');
+								spr.playAnim('pressed');
 							if (l2R)
 							{
-								spr.animation.play('static');
+								spr.playAnim('static');
 								repReleases++;
 							}
 						case 4:
 							if (dP && spr.animation.curAnim.name != 'confirm')
-								spr.animation.play('pressed');
+								spr.playAnim('pressed');
 							if (dR)
 							{
-								spr.animation.play('static');
+								spr.playAnim('static');
 								repReleases++;
 							}
 						case 5:
 							if (r2P && spr.animation.curAnim.name != 'confirm')
-								spr.animation.play('pressed');
+								spr.playAnim('pressed');
 							if (r2R)
 							{
-								spr.animation.play('static');
+								spr.playAnim('static');
 								repReleases++;
 							}
 					}
@@ -4431,43 +4433,43 @@ class PlayState extends MusicBeatState
 					switch (spr.ID)
 					{
 						case 0:
-							if (n0P && spr.animation.curAnim.name != 'confirm') spr.animation.play('pressed');
-							if (n0R) spr.animation.play('static');
+							if (n0P && spr.animation.curAnim.name != 'confirm') spr.playAnim('pressed');
+							if (n0R) spr.playAnim('static');
 						case 1:
-							if (n1P && spr.animation.curAnim.name != 'confirm') spr.animation.play('pressed');
-							if (n1R) spr.animation.play('static');
+							if (n1P && spr.animation.curAnim.name != 'confirm') spr.playAnim('pressed');
+							if (n1R) spr.playAnim('static');
 						case 2:
-							if (n2P && spr.animation.curAnim.name != 'confirm') spr.animation.play('pressed');
-							if (n2R) spr.animation.play('static');
+							if (n2P && spr.animation.curAnim.name != 'confirm') spr.playAnim('pressed');
+							if (n2R) spr.playAnim('static');
 						case 3:
-							if (n3P && spr.animation.curAnim.name != 'confirm') spr.animation.play('pressed');
-							if (n3R) spr.animation.play('static');
+							if (n3P && spr.animation.curAnim.name != 'confirm') spr.playAnim('pressed');
+							if (n3R) spr.playAnim('static');
 						case 4:
-							if (n4P && spr.animation.curAnim.name != 'confirm') spr.animation.play('pressed');
-							if (n4R) spr.animation.play('static');
+							if (n4P && spr.animation.curAnim.name != 'confirm') spr.playAnim('pressed');
+							if (n4R) spr.playAnim('static');
 						case 5:
-							if (n5P && spr.animation.curAnim.name != 'confirm') spr.animation.play('pressed');
-							if (n5R) spr.animation.play('static');
+							if (n5P && spr.animation.curAnim.name != 'confirm') spr.playAnim('pressed');
+							if (n5R) spr.playAnim('static');
 						case 6:
-							if (n6P && spr.animation.curAnim.name != 'confirm') spr.animation.play('pressed');
-							if (n6R) spr.animation.play('static');
+							if (n6P && spr.animation.curAnim.name != 'confirm') spr.playAnim('pressed');
+							if (n6R) spr.playAnim('static');
 						case 7:
-							if (n7P && spr.animation.curAnim.name != 'confirm') spr.animation.play('pressed');
-							if (n7R) spr.animation.play('static');
+							if (n7P && spr.animation.curAnim.name != 'confirm') spr.playAnim('pressed');
+							if (n7R) spr.playAnim('static');
 						case 8:
-							if (n8P && spr.animation.curAnim.name != 'confirm') spr.animation.play('pressed');
-							if (n8R) spr.animation.play('static');
+							if (n8P && spr.animation.curAnim.name != 'confirm') spr.playAnim('pressed');
+							if (n8R) spr.playAnim('static');
 					}
 				}
 					
-					if (spr.animation.curAnim.name == 'confirm' && !curStage.startsWith('school'))
+					/*if (spr.animation.curAnim.name == 'confirm' && !curStage.startsWith('school'))
 					{
 						spr.centerOffsets();
 						spr.offset.x -= 13;
 						spr.offset.y -= 13;
 					}
 					else
-						spr.centerOffsets();
+						spr.centerOffsets();*/
 				});
 	}
 
@@ -4712,11 +4714,11 @@ class PlayState extends MusicBeatState
 					boyfriend.playAnim('sing' + sDir[note.noteData], true);
 		
 					if (!loadRep)
-						playerStrums.forEach(function(spr:FlxSprite)
+						playerStrums.forEach(function(spr:ShittyFuckinDumbPsychEngineThing)
 						{
 							if (Math.abs(note.noteData) == spr.ID)
 							{
-								spr.animation.play('confirm', true);
+								spr.playAnim('confirm', true);
 							}
 						});
 		
